@@ -77,7 +77,7 @@ class SongController extends Controller
             'title' => 'required|string|max:150',
             'artist' => 'nullable|string|max:150',
             'category' => 'nullable|string|max:50',
-            'file' => 'nullable|file|extensions:mp3|mimes:mp3,mpeg|max:10240',
+            'file' => 'nullable|file|mimes:mp3,mpeg|max:10240',
             'min_package_level' => 'required|in:free,basic,premium,exclusive',
             'status' => 'required|in:active,inactive',
         ]);
