@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+@theme {
+    --color-ivory: #FFFFF0;
+    --color-cream: #F5F5DC;
+    --color-charcoal: #36454F;
+    --color-champagne: #F7E7CE;
+    --color-rose-gold: #B76E79;
+}
+
+@layer base {
+    body {
+        background-color: var(--color-ivory);
+        color: var(--color-charcoal);
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        /* fallback */
+    }
+
+    /* Verify if font-serif is available or needs import */
+}
+
+@layer components {
+    .btn-primary {
+        @apply px-6 py-3 bg-[#36454F] text-white rounded-full hover:bg-[#B76E79] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm font-medium tracking-wide;
+    }
+
+    .btn-outline {
+        @apply px-6 py-3 border-2 border-[#36454F] text-[#36454F] rounded-full hover:bg-[#36454F] hover:text-white transition-all duration-300 text-sm font-medium tracking-wide;
+    }
+
+    .section-padding {
+        @apply py-20 px-4 md:px-12 lg:px-24;
+    }
+
+    .glass-card {
+        @apply bg-white/30 backdrop-blur-md border border-white/20 rounded-2xl shadow-sm;
+    }
+}
+
+/* Custom Animations */
+.fade-up {
+    animation: fadeUp 1s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

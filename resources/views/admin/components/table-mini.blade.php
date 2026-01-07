@@ -1,0 +1,14 @@
+<div class="overflow-x-auto">
+    <table class="w-full text-sm text-left text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+                @foreach($headers as $header)
+                    <th scope="col" class="px-6 py-3 font-medium">{{ $header }}</th>
+                @endforeach
+            </tr>
+        </thead>
+        <tbody>
+            {{ $slot }}
+        </tbody>
+    </table>
+</div>

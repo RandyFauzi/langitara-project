@@ -1,0 +1,27 @@
+{
+    "template_name": "Gardenia Love",
+    "category": "Floral",
+    "style": "Elegant",
+    "supported_sections": [
+        "cover",
+        "quote",
+        "couple",
+        "love_story",
+        "carousel",
+        "events",
+        "countdown",
+        "location",
+        "gallery",
+        "rsvp",
+        "gift",
+        "wishes",
+        "closing"
+    ],
+    "supported_features": {
+        "music": true,
+        "countdown": true,
+        "rsvp": true,
+        "gift": true,
+        "gallery": true
+    }
+}
