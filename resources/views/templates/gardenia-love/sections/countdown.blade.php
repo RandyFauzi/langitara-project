@@ -53,30 +53,38 @@
     </div>
 
     <script>
-        // Simple Countdown Logic
-        // In a real implementation, '{{ $event_date }}' would be parsed to a JS Date.
-        // Assuming format is passable to Date.parse() or passing a timestamp.
-        const targetDate = new Date("{{ $event_date ?? '2026-01-01' }}").getTime();
+        // Use server-side calculated timestamp (seconds)
+        const targetTimestamp = {{ $meta['event_timestamp'] ?? 0 }};
 
-        const timer = setInterval(function () {
-            const now = new Date().getTime();
-            const distance = targetDate - now;
+        if (targetTimestamp) {
+            const targetDate = new Date(targetTimestamp * 1000).getTime();
 
-            if (distance < 0) {
-                clearInterval(timer);
-                document.getElementById("timer").innerHTML = "<div class='text-2xl font-bold'>The Event Has Started!</div>";
-                return;
-            }
+            const timer = setInterval(function () {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                if (distance < 0) {
+                    clearInterval(timer);
+                    const timerEl = document.getElementById("timer");
+                    if (timerEl) {
+                        timerEl.innerHTML = "<div class='text-2xl font-bold'>The Event Has Started!</div>";
+                    }
+                    return;
+                }
 
-            document.getElementById("days").innerText = days;
-            document.getElementById("hours").innerText = hours;
-            document.getElementById("minutes").innerText = minutes;
-            document.getElementById("seconds").innerText = seconds;
-        }, 1000);
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("days").innerText = days;
+                document.getElementById("hours").innerText = hours;
+                document.getElementById("minutes").innerText = minutes;
+                document.getElementById("seconds").innerText = seconds;
+            }, 1000);
+        } else {
+            // Fallback for preview if no date set
+            document.getElementById("timer").style.opacity = "0.5";
+        }
     </script>
 </section>

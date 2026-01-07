@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Song;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class SongController extends Controller
 {
@@ -34,30 +35,40 @@ class SongController extends Controller
             'title' => 'required|string|max:150',
             'artist' => 'nullable|string|max:150',
             'category' => 'nullable|string|max:50',
-            'file' => 'required|file|mimes:mp3,mpeg|max:10240',
+            'file' => [
+                'required',
+                'file',
+                'max:10240', // 10MB
+                'extensions:mp3,wav,ogg', // Strict extension check
+            ],
             'min_package_level' => 'required|in:free,basic,premium,exclusive',
             'status' => 'required|in:active,inactive',
         ]);
 
         $file = $request->file('file');
-        $fileName = time() . '_' . preg_replace('/[^a-z0-9.]/i', '_', $file->getClientOriginalName());
 
-        // Define path based on package level (optional structure, aiming for cleaner organization)
-        $directory = 'assets/music/' . $request->min_package_level;
-        $path = public_path($directory);
+        // Generate unique filename: timestamp_uuid.extension
+        $extension = $file->getClientOriginalExtension();
+        $fileName = time() . '_' . Str::uuid() . '.' . $extension;
 
-        if (!File::exists($path)) {
-            File::makeDirectory($path, 0755, true);
+        // Clean relative path: assets/music/{package}/filename.mp3
+        $relativeDir = 'assets/music/' . $request->min_package_level;
+        $absolutePath = public_path($relativeDir);
+
+        if (!File::exists($absolutePath)) {
+            File::makeDirectory($absolutePath, 0755, true);
         }
 
-        $file->move($path, $fileName);
-        $filePath = $directory . '/' . $fileName;
+        $file->move($absolutePath, $fileName);
+
+        // Store RELATIVE path for portability
+        $dbPath = $relativeDir . '/' . $fileName;
 
         Song::create([
             'title' => $request->title,
             'artist' => $request->artist,
             'category' => $request->category,
-            'file_path' => $filePath,
+            'file_path' => $dbPath,
             'min_package_level' => $request->min_package_level,
             'status' => $request->status,
             'is_premium' => $request->min_package_level !== 'free',
@@ -77,30 +88,44 @@ class SongController extends Controller
             'title' => 'required|string|max:150',
             'artist' => 'nullable|string|max:150',
             'category' => 'nullable|string|max:50',
-            'file' => 'nullable|file|mimes:mp3,mpeg|max:10240',
+            'file' => [
+                'nullable',
+                'file',
+                'max:10240',
+                'extensions:mp3,wav,ogg',
+            ],
             'min_package_level' => 'required|in:free,basic,premium,exclusive',
             'status' => 'required|in:active,inactive',
         ]);
 
         // Handle File Replacement
         if ($request->hasFile('file')) {
-            // Delete old file
+            // Delete old file if exists
             if (File::exists(public_path($song->file_path))) {
                 File::delete(public_path($song->file_path));
             }
 
             $file = $request->file('file');
-            $fileName = time() . '_' . preg_replace('/[^a-z0-9.]/i', '_', $file->getClientOriginalName());
-            $directory = 'assets/music/' . $request->min_package_level;
-            $path = public_path($directory);
 
-            if (!File::exists($path)) {
-                File::makeDirectory($path, 0755, true);
+            // Generate unique filename
+            $extension = $file->getClientOriginalExtension();
+            $fileName = time() . '_' . Str::uuid() . '.' . $extension;
+
+            // Determine new path (might change if package level changed)
+            $targetPackage = $request->min_package_level; // Move to new package folder if changed? logic-wise yes.
+            $relativeDir = 'assets/music/' . $targetPackage;
+            $absolutePath = public_path($relativeDir);
+
+            if (!File::exists($absolutePath)) {
+                File::makeDirectory($absolutePath, 0755, true);
             }
 
-            $file->move($path, $fileName);
-            $song->file_path = $directory . '/' . $fileName;
+            $file->move($absolutePath, $fileName);
+            $song->file_path = $relativeDir . '/' . $fileName;
         }
+        // If package level changes but NO file upload, we *could* move the file, 
+        // but for now keeping it in original folder is safer unless we strictly want to enforce folder structure.
+        // Let's keep it simple: only physical move on re-upload.
 
         $song->update([
             'title' => $request->title,
@@ -109,6 +134,7 @@ class SongController extends Controller
             'min_package_level' => $request->min_package_level,
             'status' => $request->status,
             'is_premium' => $request->min_package_level !== 'free',
+            // file_path is already updated above if file was present
         ]);
 
         return redirect()->back()->with('success', 'Lagu berhasil diperbarui.');

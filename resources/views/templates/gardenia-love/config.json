@@ -2,21 +2,60 @@
     "template_name": "Gardenia Love",
     "category": "Floral",
     "style": "Elegant",
-    "supported_sections": [
-        "cover",
-        "quote",
-        "couple",
-        "love_story",
-        "carousel",
-        "events",
-        "countdown",
-        "location",
-        "gallery",
-        "rsvp",
-        "gift",
-        "wishes",
-        "closing"
-    ],
+    "supported_sections": {
+        "cover": {
+            "required": true,
+            "label": "Cover Depan"
+        },
+        "quote": {
+            "required": false,
+            "label": "Kutipan"
+        },
+        "couple": {
+            "required": true,
+            "label": "Mempelai"
+        },
+        "love_story": {
+            "required": false,
+            "label": "Kisah Cinta"
+        },
+        "carousel": {
+            "required": false,
+            "label": "Galeri Slide"
+        },
+        "events": {
+            "required": true,
+            "label": "Acara/Resepsi"
+        },
+        "countdown": {
+            "required": false,
+            "label": "Hitung Mundur"
+        },
+        "location": {
+            "required": true,
+            "label": "Lokasi Peta"
+        },
+        "gallery": {
+            "required": false,
+            "label": "Galeri Foto"
+        },
+        "rsvp": {
+            "required": true,
+            "label": "Form RSVP"
+        },
+        "gift": {
+            "required": false,
+            "label": "Digital Envelope"
+        },
+        "wishes": {
+            "required": false,
+            "label": "Ucapan & Doa"
+        },
+        "closing": {
+            "required": true,
+            "label": "Penutup"
+        }
+    },
     "supported_features": {
         "music": true,
         "countdown": true,

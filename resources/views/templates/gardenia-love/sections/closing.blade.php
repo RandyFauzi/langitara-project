@@ -5,7 +5,8 @@
         <p class="text-sm tracking-widest text-amber-400 uppercase mb-6">Thank You</p>
 
         <h2 class="font-script text-6xl md:text-7xl mb-8">
-            {{ $bride_name }} <span class="text-amber-500">&</span> {{ $groom_name }}
+            {{ $couple['bride_name'] ?? 'Bride' }} <span class="text-amber-500">&</span>
+            {{ $couple['groom_name'] ?? 'Groom' }}
         </h2>
 
         <p class="text-slate-400 italic font-serif mb-12">

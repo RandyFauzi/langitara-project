@@ -23,13 +23,16 @@ Route::group(['as' => 'public.'], function () {
     Route::view('/about', 'pages.public.about')->name('about');
 });
 
-// Auth Routes (Placeholder)
-Route::get('/login', function () {
-    return 'Login Page';
-})->name('login');
-Route::get('/register', function () {
-    return 'Register Page';
-})->name('register');
+// Auth Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [App\Http\Controllers\Auth\AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [App\Http\Controllers\Auth\AuthController::class, 'login']);
+    Route::get('/register', [App\Http\Controllers\Auth\AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [App\Http\Controllers\Auth\AuthController::class, 'register']);
+});
+
+Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout')->middleware('auth');
+
 
 // Dashboard Routes (Placeholder)
 Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.', 'middleware' => ['auth']], function () {

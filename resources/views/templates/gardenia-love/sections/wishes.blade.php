@@ -5,23 +5,25 @@
 
     <div class="max-w-xl mx-auto space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
         <!-- Dummy Wishes Loop -->
-        @for ($i = 0; $i < 3; $i++)
-            <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
-                <div class="flex items-center gap-3 mb-3">
-                    <div
-                        class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-xs ring-2 ring-white shadow">
-                        {{ ['AD', 'JS', 'MR'][$i] }}
+        @if(isset($wishes) && is_array($wishes))
+            @foreach($wishes as $wish)
+                <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div
+                            class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 font-bold text-xs ring-2 ring-white shadow">
+                            {{ $wish['initials'] ?? 'G' }}
+                        </div>
+                        <div>
+                            <h5 class="text-sm font-bold text-slate-800">{{ $wish['name'] ?? 'Guest' }}</h5>
+                            <p class="text-[10px] text-slate-400">{{ $wish['time'] ?? 'Just now' }}</p>
+                        </div>
                     </div>
-                    <div>
-                        <h5 class="text-sm font-bold text-slate-800">{{ ['Ananda Dwi', 'John Smith', 'Maria R.'][$i] }}</h5>
-                        <p class="text-[10px] text-slate-400">Just now</p>
-                    </div>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        {{ $wish['message'] ?? 'Best wishes for both of you!' }}
+                    </p>
                 </div>
-                <p class="text-sm text-slate-600 leading-relaxed">
-                    {{ ['Happy Wedding! Semoga menjadi keluarga sakinah mawaddah warahmah.', 'Congratulations on your big day!', 'Wishing you a lifetime of love and happiness together.'][$i] }}
-                </p>
-            </div>
-        @endfor
+            @endforeach
+        @endif
     </div>
 
     <!-- CSS for clean scrollbar -->

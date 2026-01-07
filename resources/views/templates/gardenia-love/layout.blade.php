@@ -67,45 +67,84 @@
     <main class="w-full max-w-[500px] mx-auto bg-white shadow-2xl min-h-screen relative">
 
         <!-- Sections -->
-        @include('templates.gardenia-love.sections.cover')
-        @include('templates.gardenia-love.sections.quote')
-        @include('templates.gardenia-love.sections.couple')
-        @include('templates.gardenia-love.sections.love-story')
-        @include('templates.gardenia-love.sections.carousel')
-        @include('templates.gardenia-love.sections.events')
-        @include('templates.gardenia-love.sections.countdown')
-        @include('templates.gardenia-love.sections.location')
-        @include('templates.gardenia-love.sections.gallery')
-        @include('templates.gardenia-love.sections.rsvp')
-        @include('templates.gardenia-love.sections.gift')
-        @include('templates.gardenia-love.sections.wishes')
-        @include('templates.gardenia-love.sections.closing')
+        @if($features['cover'] ?? true)
+            @include('templates.gardenia-love.sections.cover')
+        @endif
+
+        @if($features['quote'] ?? false)
+            @include('templates.gardenia-love.sections.quote')
+        @endif
+
+        @if($features['couple'] ?? true)
+            @include('templates.gardenia-love.sections.couple')
+        @endif
+
+        @if($features['love_story'] ?? false)
+            @include('templates.gardenia-love.sections.love-story')
+        @endif
+
+        @if($features['carousel'] ?? false)
+            @include('templates.gardenia-love.sections.carousel')
+        @endif
+
+        @if($features['events'] ?? true)
+            @include('templates.gardenia-love.sections.events')
+        @endif
+
+        @if($features['countdown'] ?? false)
+            @include('templates.gardenia-love.sections.countdown')
+        @endif
+
+        @if($features['location'] ?? true)
+            @include('templates.gardenia-love.sections.location')
+        @endif
+
+        @if($features['gallery'] ?? false)
+            @include('templates.gardenia-love.sections.gallery')
+        @endif
+
+        @if($features['rsvp'] ?? true)
+            @include('templates.gardenia-love.sections.rsvp')
+        @endif
+
+        @if($features['gift'] ?? false)
+            @include('templates.gardenia-love.sections.gift')
+        @endif
+
+        @if($features['wishes'] ?? false)
+            @include('templates.gardenia-love.sections.wishes')
+        @endif
+
+        @if($features['closing'] ?? true)
+            @include('templates.gardenia-love.sections.closing')
+        @endif
 
     </main>
 
-    <!-- Global Music Player -->
-    <audio id="bg-music" loop>
-        <source src="{{ asset('assets/music/romantic.mp3') }}" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
+    @if(!empty($meta['song_url']))
+        <audio id="bg-music" loop>
+            <source src="{{ $meta['song_url'] }}" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
 
-    <!-- Floating Music Control -->
-    <button id="music-control" onclick="toggleMusic()"
-        class="fixed bottom-6 right-6 z-50 w-12 h-12 bg-white/80 backdrop-blur rounded-full shadow-lg flex items-center justify-center text-amber-600 animate-spin-slow border border-amber-100 hover:bg-white transition">
-        <!-- Icon Playing -->
-        <svg id="icon-play" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z">
-            </path>
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-        <!-- Icon Pause -->
-        <svg id="icon-pause" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-        </svg>
-    </button>
+        <!-- Floating Music Control -->
+        <button id="music-control" onclick="toggleMusic()"
+            class="fixed bottom-6 right-6 z-50 w-12 h-12 bg-white/80 backdrop-blur rounded-full shadow-lg flex items-center justify-center text-amber-600 animate-spin-slow border border-amber-100 hover:bg-white transition">
+            <!-- Icon Playing -->
+            <svg id="icon-play" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z">
+                </path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <!-- Icon Pause -->
+            <svg id="icon-pause" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </button>
+    @endif
 
     <!-- Custom Toast Notification -->
     <div id="toast-container"
@@ -139,12 +178,14 @@
         const iconPause = document.getElementById('icon-pause');
         let isPlaying = true;
 
-        // Auto-play attempt (often blocked by browser policy until interaction)
-        window.addEventListener('click', () => {
-            if (!isPlaying && music.paused) {
-                toggleMusic();
-            }
-        }, { once: true });
+        if (music && btnMusic) {
+            // Auto-play attempt (often blocked by browser policy until interaction)
+            window.addEventListener('click', () => {
+                if (!isPlaying && music.paused) {
+                    toggleMusic();
+                }
+            }, { once: true });
+        }
 
         function toggleMusic() {
             if (music.paused) {

@@ -211,7 +211,8 @@
 
                 <div class="pt-2">
                     <label class="block text-sm font-semibold text-slate-700 mb-1.5">File Audio (MP3)</label>
-                    <input type="file" name="file" accept=".mp3" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition"/>
+                    <input type="file" name="file" accept=".mp3,.wav,.ogg" onchange="updateFileName(this)" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition"/>
+                    <p id="file-name-display" class="text-sm text-emerald-600 font-medium mt-2"></p>
                     <p class="text-xs text-slate-400 mt-1">Biarkan kosong jika edit dan tidak ingin mengganti file.</p>
                 </div>
             </div>
@@ -242,6 +243,7 @@
             btn.innerText = 'Upload';
             
             form.querySelector('input[name="file"]').required = true;
+            document.getElementById('file-name-display').innerText = '';
 
             modal.showModal();
         }
@@ -271,8 +273,18 @@
             
             // File not required on edit
             form.querySelector('input[name="file"]').required = false;
+            document.getElementById('file-name-display').innerText = '';
 
             modal.showModal();
+        }
+
+        function updateFileName(input) {
+            const display = document.getElementById('file-name-display');
+            if (input.files && input.files.length > 0) {
+                display.innerText = 'File chosen: ' + input.files[0].name;
+            } else {
+                display.innerText = '';
+            }
         }
     </script>
 @endsection
