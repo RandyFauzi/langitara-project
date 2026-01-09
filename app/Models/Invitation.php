@@ -19,11 +19,14 @@ class Invitation extends Model
         'location',
         'status',
         'expired_at',
+        'payload',
+        'song_id',
     ];
 
     protected $casts = [
         'event_date' => 'date',
         'expired_at' => 'datetime',
+        'payload' => 'array',
     ];
 
     public function user()
@@ -41,9 +44,29 @@ class Invitation extends Model
         return $this->belongsTo(Package::class);
     }
 
+    public function song()
+    {
+        return $this->belongsTo(Song::class);
+    }
+
     public function detail()
     {
         return $this->hasOne(InvitationDetail::class);
+    }
+
+    public function events()
+    {
+        return $this->hasMany(InvitationEvent::class)->orderBy('sort_order');
+    }
+
+    public function loveStories()
+    {
+        return $this->hasMany(InvitationLoveStory::class)->orderBy('sort_order');
+    }
+
+    public function galleries()
+    {
+        return $this->hasMany(InvitationGallery::class)->orderBy('sort_order');
     }
 
     public function guests()

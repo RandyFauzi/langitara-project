@@ -1,0 +1,41 @@
+/* Custom Template Styles */
+:root {
+    --color-primary: #D4AF37;
+    /* Soft Gold */
+    --color-secondary: #FDFBF7;
+    /* Ivory / Cream */
+    --color-text: #4A4A4A;
+    --font-heading: 'Cormorant Garamond', serif;
+    --font-script: 'Great Vibes', cursive;
+    --font-body: 'Montserrat', sans-serif;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background-color: var(--color-secondary);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-heading);
+}
+
+.font-script {
+    font-family: var(--font-script);
+}
+
+.fade-in-up {
+    animation: fadeInUp 1s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

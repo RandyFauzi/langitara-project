@@ -5,8 +5,8 @@
     </div>
 
     <div class="space-y-8 max-w-2xl mx-auto">
-        @if(isset($events) && is_array($events))
-            @foreach($events as $event)
+        @if(isset($data['events']) && is_array($data['events']))
+            @foreach($data['events'] as $event)
                 <div class="bg-white border border-slate-100 rounded-3xl shadow-lg p-8 relative overflow-hidden group">
                     <!-- Decor -->
                     <div

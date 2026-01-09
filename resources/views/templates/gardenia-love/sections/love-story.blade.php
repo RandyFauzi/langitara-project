@@ -8,8 +8,8 @@
         <!-- Vertical Line -->
         <div class="absolute left-8 md:left-1/2 top-0 bottom-0 w-px bg-amber-200 -z-10"></div>
 
-        @if(isset($love_story) && is_array($love_story))
-            @foreach($love_story as $index => $story)
+        @if(isset($data['love_story']) && is_array($data['love_story']))
+            @foreach($data['love_story'] as $index => $story)
                 <div
                     class="relative flex items-start gap-6 md:gap-0 {{ $index % 2 == 0 ? 'md:flex-row' : 'md:flex-row-reverse' }}">
 

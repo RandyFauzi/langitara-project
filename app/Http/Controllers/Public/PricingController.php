@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Package;
 
 class PricingController extends Controller
 {
     public function index()
     {
-        return view('pages.public.pricing.index');
+        $packages = Package::where('status', 'active')
+            ->orderBy('price', 'asc')
+            ->get();
+
+        return view('pages.public.pricing.index', compact('packages'));
     }
 }

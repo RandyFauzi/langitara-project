@@ -7,11 +7,11 @@
         </svg>
 
         <p class="font-serif text-xl md:text-2xl text-slate-700 italic leading-relaxed mb-6">
-            "{{ $quote['text'] ?? 'Love is patient, love is kind. It does not envy, it does not boast, it is not proud.' }}"
+            "{{ $data['quote']['text'] ?? 'Love is patient, love is kind. It does not envy, it does not boast, it is not proud.' }}"
         </p>
 
         <p class="text-sm font-bold uppercase tracking-widest text-amber-600">
-            — {{ $quote['source'] ?? 'Unknown' }}
+            — {{ $data['quote']['source'] ?? 'Unknown' }}
         </p>
     </div>
 </section>

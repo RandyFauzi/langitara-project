@@ -4,8 +4,8 @@
     </div>
 
     <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-        @if(isset($gallery) && is_array($gallery))
-            @foreach($gallery as $index => $image)
+        @if(isset($data['gallery']) && is_array($data['gallery']))
+            @foreach($data['gallery'] as $index => $image)
                 <div class="relative group aspect-square rounded-xl overflow-hidden cursor-pointer">
                     <img src="{{ $image }}" loading="lazy"
                         class="w-full h-full object-cover transition duration-700 transform group-hover:scale-110"

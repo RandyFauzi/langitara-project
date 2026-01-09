@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Public\PublicHomeController;
 use App\Http\Controllers\Public\TemplateController;
 use App\Http\Controllers\Public\PricingController;
+use App\Http\Controllers\Public\TemplateAssetController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,9 @@ Route::group(['as' => 'public.'], function () {
     Route::get('/pricing', [PricingController::class, 'index'])->name('pricing');
 
     Route::view('/about', 'pages.public.about')->name('about');
+
+    // Template Assets Route
+    Route::get('templates/{slug}/assets/{type}/{file}', [TemplateAssetController::class, 'show'])->name('templates.assets');
 });
 
 // Auth Routes
@@ -34,15 +38,17 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [App\Http\Controllers\Auth\AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 
-// Dashboard Routes (Placeholder)
+// Dashboard Routes (User)
 Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.', 'middleware' => ['auth']], function () {
-    Route::get('/', function () {
-        return 'User Dashboard';
-    })->name('index');
+    Route::get('/', [App\Http\Controllers\User\DashboardController::class, 'index'])->name('index');
+    Route::get('/account', [App\Http\Controllers\User\UserAccountController::class, 'index'])->name('account');
+    Route::put('/account', [App\Http\Controllers\User\UserAccountController::class, 'update'])->name('account.update');
+    Route::get('/account/password', [App\Http\Controllers\User\UserAccountController::class, 'password'])->name('account.password');
+    Route::put('/account/password', [App\Http\Controllers\User\UserAccountController::class, 'updatePassword'])->name('account.password.update');
 });
 
 // Admin Routes
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
+Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'role:admin']], function () {
     Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
 
     // Orders Module
@@ -64,7 +70,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::post('/users/{user}/reset-password', [App\Http\Controllers\Admin\UserController::class, 'resetPassword'])->name('users.reset-password');
 
     // Invitations Module
-    Route::resource('invitations', App\Http\Controllers\Admin\InvitationController::class)->only(['index', 'show']);
+    Route::resource('invitations', App\Http\Controllers\Admin\InvitationController::class)->only(['index', 'show', 'create', 'store']);
+    Route::get('/invitations/{invitation}/editor', [App\Http\Controllers\Admin\InvitationEditorPageController::class, 'show'])->name('invitations.editor');
     Route::post('/invitations/{invitation}/impersonate', [App\Http\Controllers\Admin\InvitationController::class, 'impersonate'])->name('invitations.impersonate');
 
     // Activity Logs
@@ -81,11 +88,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     // Music
     Route::resource('songs', \App\Http\Controllers\Admin\SongController::class)->except(['create', 'edit', 'show']);
 
-});
+    // EDITOR API
+    Route::group(['prefix' => 'editor', 'as' => 'editor.'], function () {
+        Route::get('invitations/{invitation}', [\App\Http\Controllers\Admin\InvitationEditorController::class, 'show'])->name('invitations.show');
+        Route::post('invitations/{invitation}', [\App\Http\Controllers\Admin\InvitationEditorController::class, 'update'])->name('invitations.update');
+        Route::post('invitations/{invitation}/preview', [\App\Http\Controllers\Admin\InvitationEditorController::class, 'preview'])->name('invitations.preview');
+        Route::post('media/upload', [\App\Http\Controllers\Admin\InvitationMediaController::class, 'store'])->name('media.upload');
+    });
 
-// Admin Routes (Placeholder)
-Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'role:admin']], function () {
-    Route::get('/', function () {
-        return 'Admin Dashboard';
-    })->name('index');
 });

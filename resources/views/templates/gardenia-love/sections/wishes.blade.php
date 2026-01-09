@@ -5,8 +5,8 @@
 
     <div class="max-w-xl mx-auto space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
         <!-- Dummy Wishes Loop -->
-        @if(isset($wishes) && is_array($wishes))
-            @foreach($wishes as $wish)
+        @if(isset($data['wishes']) && is_array($data['wishes']))
+            @foreach($data['wishes'] as $wish)
                 <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
                     <div class="flex items-center gap-3 mb-3">
                         <div

@@ -17,113 +17,21 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        /* Custom Template Styles */
-        :root {
-            --color-primary: #D4AF37;
-            /* Soft Gold */
-            --color-secondary: #FDFBF7;
-            /* Ivory / Cream */
-            --color-text: #4A4A4A;
-            --font-heading: 'Cormorant Garamond', serif;
-            --font-script: 'Great Vibes', cursive;
-            --font-body: 'Montserrat', sans-serif;
-        }
-
-        body {
-            font-family: var(--font-body);
-            color: var(--color-text);
-            background-color: var(--color-secondary);
-        }
-
-        h1,
-        h2,
-        h3,
-        h4 {
-            font-family: var(--font-heading);
-        }
-
-        .font-script {
-            font-family: var(--font-script);
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 1s ease-out forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        /* Base styles if needed, but per-template styles should be loaded dynamically */
     </style>
+    <link rel="stylesheet" href="{{ $data['__template']['asset_path'] }}/css/style.css">
 </head>
 
 <body class="antialiased overflow-x-hidden">
 
     <!-- Main Container -->
     <main class="w-full max-w-[500px] mx-auto bg-white shadow-2xl min-h-screen relative">
-
-        <!-- Sections -->
-        @if($features['cover'] ?? true)
-            @include('templates.gardenia-love.sections.cover')
-        @endif
-
-        @if($features['quote'] ?? false)
-            @include('templates.gardenia-love.sections.quote')
-        @endif
-
-        @if($features['couple'] ?? true)
-            @include('templates.gardenia-love.sections.couple')
-        @endif
-
-        @if($features['love_story'] ?? false)
-            @include('templates.gardenia-love.sections.love-story')
-        @endif
-
-        @if($features['carousel'] ?? false)
-            @include('templates.gardenia-love.sections.carousel')
-        @endif
-
-        @if($features['events'] ?? true)
-            @include('templates.gardenia-love.sections.events')
-        @endif
-
-        @if($features['countdown'] ?? false)
-            @include('templates.gardenia-love.sections.countdown')
-        @endif
-
-        @if($features['location'] ?? true)
-            @include('templates.gardenia-love.sections.location')
-        @endif
-
-        @if($features['gallery'] ?? false)
-            @include('templates.gardenia-love.sections.gallery')
-        @endif
-
-        @if($features['rsvp'] ?? true)
-            @include('templates.gardenia-love.sections.rsvp')
-        @endif
-
-        @if($features['gift'] ?? false)
-            @include('templates.gardenia-love.sections.gift')
-        @endif
-
-        @if($features['wishes'] ?? false)
-            @include('templates.gardenia-love.sections.wishes')
-        @endif
-
-        @if($features['closing'] ?? true)
-            @include('templates.gardenia-love.sections.closing')
-        @endif
-
+        @yield('content')
     </main>
 
-    @if(!empty($meta['song_url']))
+    @if(!empty($data['meta']['song_url']))
         <audio id="bg-music" loop>
-            <source src="{{ $meta['song_url'] }}" type="audio/mpeg">
+            <source src="{{ $data['meta']['song_url'] }}" type="audio/mpeg">
             Your browser does not support the audio element.
         </audio>
 
@@ -157,68 +65,7 @@
         </div>
     </div>
 
-    <script>
-        // --- Scroll Animation ---
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in-up');
-                }
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('section > div').forEach((el) => {
-            observer.observe(el);
-        });
-
-        // --- Music Player Logic ---
-        const music = document.getElementById('bg-music');
-        const btnMusic = document.getElementById('music-control');
-        const iconPlay = document.getElementById('icon-play');
-        const iconPause = document.getElementById('icon-pause');
-        let isPlaying = true;
-
-        if (music && btnMusic) {
-            // Auto-play attempt (often blocked by browser policy until interaction)
-            window.addEventListener('click', () => {
-                if (!isPlaying && music.paused) {
-                    toggleMusic();
-                }
-            }, { once: true });
-        }
-
-        function toggleMusic() {
-            if (music.paused) {
-                music.play();
-                iconPlay.classList.add('hidden');
-                iconPause.classList.remove('hidden');
-                btnMusic.classList.add('animate-spin-slow');
-                isPlaying = true;
-            } else {
-                music.pause();
-                iconPlay.classList.remove('hidden');
-                iconPause.classList.add('hidden');
-                btnMusic.classList.remove('animate-spin-slow');
-                isPlaying = false;
-            }
-        }
-
-        // --- Toast Notification Logic ---
-        function showToast(message) {
-            const container = document.getElementById('toast-container');
-            const msgSpan = document.getElementById('toast-message');
-
-            msgSpan.innerText = message;
-
-            // Show
-            container.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
-
-            // Hide after 3s
-            setTimeout(() => {
-                container.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
-            }, 3000);
-        }
-    </script>
+    <script src="{{ $data['__template']['asset_path'] }}/js/template.js" defer></script>
 </body>
 
 </html>

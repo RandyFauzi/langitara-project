@@ -5,110 +5,77 @@
             <p class="text-gray-600 max-w-2xl mx-auto">Temukan paket yang sesuai dengan kebutuhan dan budget Anda.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 ">
-            <!-- Free -->
-            <div class="border border-gray-200 rounded-2xl p-8 hover:border-rose-300 transition-colors"
-                data-aos="fade-up" data-aos-delay="0">
-                <h3 class="font-bold text-xl text-charcoal">Free</h3>
-                <div class="my-4">
-                    <span class="text-4xl font-bold text-charcoal font-serif">Rp 0</span>
-                </div>
-                <p class="text-gray-500 text-sm mb-6">Masa aktif 3 hari</p>
-                <ul class="space-y-4 mb-8 text-sm text-gray-600">
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> 1 Template Basic</li>
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> Max 50 Tamu</li>
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> RSVP Standard</li>
-                </ul>
-                <a href="#"
-                    class="block w-full py-3 text-center border-2 border-gray-200 rounded-full font-bold text-gray-500 hover:bg-gray-50 transition-colors">Pilih
-                    Free</a>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            @forelse(($packages ?? collect())->take(4) as $index => $package)
+                <div class="relative {{ $package->is_featured ? 'border-2 border-rose-500 shadow-xl z-10' : 'border border-gray-200 hover:border-rose-300' }} bg-white rounded-2xl p-6 transition-all duration-300 flex flex-col"
+                    data-aos="fade-up" data-aos-delay="{{ $index * 100 }}">
 
-            <!-- Premium -->
-            <div class="relative border-2 border-rose-500 rounded-2xl p-8 shadow-xl bg-white transform md:-translate-y-4"
-                data-aos="fade-up" data-aos-delay="100">
-                <div
-                    class="absolute top-0 right-0 bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl">
-                    BEST SELLER</div>
-                <h3 class="font-bold text-xl text-charcoal">Premium</h3>
-                <div class="my-4">
-                    <span class="text-4xl font-bold text-charcoal font-serif">Rp 99rb</span>
-                    <span class="text-gray-400 line-through text-sm">Rp 199rb</span>
-                </div>
-                <p class="text-gray-500 text-sm mb-6">Masa aktif 6 bulan</p>
-                <ul class="space-y-4 mb-8 text-sm text-gray-600">
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> Semua Template Premium</li>
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> Unlimited Tamu</li>
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> Galeri 10 Foto</li>
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> Music Player</li>
-                </ul>
-                <a href="#"
-                    class="block w-full py-3 text-center bg-rose-600 text-white rounded-full font-bold hover:bg-rose-700 transition-colors shadow-lg">Pilih
-                    Premium</a>
-            </div>
+                    <!-- Best Seller Badge -->
+                    @if($package->is_featured)
+                        <div
+                            class="absolute -top-3 left-1/2 -translate-x-1/2 bg-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                            🔥 BEST SELLER
+                        </div>
+                    @endif
 
-            <!-- Exclusive -->
-            <div class="border border-gray-200 rounded-2xl p-8 hover:border-rose-300 transition-colors"
-                data-aos="fade-up" data-aos-delay="200">
-                <h3 class="font-bold text-xl text-charcoal">Exclusive</h3>
-                <div class="my-4">
-                    <span class="text-4xl font-bold text-charcoal font-serif">Rp 249rb</span>
+                    <h3 class="font-bold text-lg text-charcoal mt-2">{{ $package->name }}</h3>
+
+                    <div class="my-3">
+                        @if($package->hasPromo())
+                            <span class="text-gray-400 line-through text-sm">{{ $package->formatted_original_price }}</span>
+                        @endif
+                        <div>
+                            <span
+                                class="text-2xl font-bold {{ $package->price == 0 ? 'text-green-600' : 'text-charcoal' }} font-serif">
+                                {{ $package->formatted_price }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-500 text-xs mb-4">
+                        @if($package->duration_days > 0)
+                            Aktif {{ $package->duration_days }} hari
+                        @else
+                            Tanpa batas waktu
+                        @endif
+                    </p>
+
+                    <ul class="space-y-2 mb-6 text-sm text-gray-600 flex-1">
+                        @foreach(array_slice($package->features ?? [], 0, 4) as $feature)
+                            <li class="flex items-start gap-2">
+                                @if(str_contains(strtolower($feature), 'tidak'))
+                                    <svg class="w-4 h-4 text-gray-300 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    <span class="text-gray-400">{{ $feature }}</span>
+                                @else
+                                    <svg class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                                        </path>
+                                    </svg>
+                                    <span>{{ $feature }}</span>
+                                @endif
+                            </li>
+                        @endforeach
+                    </ul>
+
+                    <a href="{{ route('register') }}"
+                        class="block w-full py-2.5 text-center rounded-full font-bold transition-colors text-sm {{ $package->is_featured ? 'bg-rose-600 text-white hover:bg-rose-700 shadow-lg' : 'border-2 border-gray-200 text-gray-600 hover:bg-gray-50' }}">
+                        {{ $package->can_publish ? 'Pilih' : 'Coba Gratis' }}
+                    </a>
                 </div>
-                <p class="text-gray-500 text-sm mb-6">Masa aktif selamanya</p>
-                <ul class="space-y-4 mb-8 text-sm text-gray-600">
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> Custom Domain (.com)</li>
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> Prioritas Support</li>
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> Hapus Watermark</li>
-                    <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg> Galeri 50 Foto</li>
-                </ul>
-                <a href="#"
-                    class="block w-full py-3 text-center border-2 border-gray-200 rounded-full font-bold text-gray-500 hover:bg-gray-50 transition-colors">Pilih
-                    Exclusive</a>
-            </div>
+            @empty
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-500">Paket akan segera tersedia.</p>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="mt-12 text-center">
+            <a href="{{ route('public.pricing') }}" class="btn-outline inline-block">Lihat Semua Paket</a>
         </div>
     </div>
 </section>

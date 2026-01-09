@@ -1,0 +1,26 @@
+{
+    "template_name": "Test Asset System",
+    "category": "General",
+    "style": "Modern",
+    "supported_sections": [
+        "cover",
+        "quote",
+        "couple",
+        "love_story",
+        "events",
+        "countdown",
+        "location",
+        "gallery",
+        "rsvp",
+        "gift",
+        "wishes",
+        "closing"
+    ],
+    "supported_features": {
+        "music": true,
+        "countdown": true,
+        "rsvp": true,
+        "gift": true,
+        "gallery": true
+    }
+}

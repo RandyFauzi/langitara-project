@@ -3,15 +3,67 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Template;
 use Illuminate\Http\Request;
 
 class TemplateController extends Controller
 {
-    public function index()
+    protected $renderer;
+
+    public function __construct(\App\Services\Template\TemplateRendererService $renderer)
     {
-        return view('pages.public.templates.index');
+        $this->renderer = $renderer;
     }
 
+    /**
+     * Display templates listing with category filter and pagination
+     */
+    public function index(Request $request)
+    {
+        $category = $request->get('category', 'all');
+        $perPage = 6; // Show 6 templates per load
+
+        $query = Template::active()->orderBy('created_at', 'desc');
+
+        if ($category !== 'all') {
+            $query->where('category', $category);
+        }
+
+        // For AJAX requests (infinite scroll), return JSON
+        if ($request->ajax()) {
+            $templates = $query->paginate($perPage);
+
+            return response()->json([
+                'templates' => $templates->map(function ($template) {
+                    return [
+                        'id' => $template->id,
+                        'name' => $template->name,
+                        'slug' => $template->slug,
+                        'category' => $template->category,
+                        'preview_image' => $template->preview_image_path ? asset($template->preview_image_path) : null,
+                        'is_premium' => $template->is_premium,
+                        'url' => $template->slug ? route('public.templates.show', $template->slug) : route('public.templates.index'),
+                    ];
+                }),
+                'hasMore' => $templates->hasMorePages(),
+                'nextPage' => $templates->currentPage() + 1,
+            ]);
+        }
+
+        // Initial page load - get first batch
+        $templates = $query->paginate($perPage);
+        $categories = Template::active()
+            ->select('category')
+            ->distinct()
+            ->whereNotNull('category')
+            ->pluck('category');
+
+        return view('pages.public.templates.index', compact('templates', 'categories', 'category'));
+    }
+
+    /**
+     * Show single template preview
+     */
     public function show($slug)
     {
         // Mocking data for 'Gardenia Love' template preview
@@ -27,8 +79,8 @@ class TemplateController extends Controller
                     'description' => 'We are getting married!',
                     'cover_image' => 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000',
                     'song_url' => asset('assets/music/romantic.mp3'),
-                    'event_date' => '01 . 01 . 2026', // Display format
-                    'event_timestamp' => strtotime('2026-01-01 10:00:00'), // Logic format
+                    'event_date' => '01 . 01 . 2026',
+                    'event_timestamp' => strtotime('2026-01-01 10:00:00'),
                 ],
 
                 // 2. Feature Flags (Strict Boolean)
@@ -105,7 +157,7 @@ class TemplateController extends Controller
                 ],
 
                 'rsvp' => [
-                    'action' => route('home'), // Dummy route
+                    'action' => route('public.home'),
                 ],
 
                 'gift' => [
@@ -119,10 +171,6 @@ class TemplateController extends Controller
                     ['name' => 'Keluarga Besar', 'initials' => 'KB', 'time' => '1h ago', 'message' => 'Semoga bahagia selalu.'],
                 ],
 
-                // Loose variables for sections that might not have been fully migrated yet?
-                // Checking previous files:
-                // location.blade.php uses $location_name, $location_address, $location_map_embed
-                // I should standardize these too.
                 'location' => [
                     'name' => 'The Trans Luxury Hotel',
                     'address' => 'Jl. Gatot Subroto No.289, Cibangkong, Kec. Batununggal, Kota Bandung, Jawa Barat 40273',
@@ -130,7 +178,7 @@ class TemplateController extends Controller
                 ]
             ];
 
-            return view('templates.gardenia-love.layout', $data);
+            return $this->renderer->render('gardenia-love', $data);
         }
 
         return view('pages.public.templates.show');

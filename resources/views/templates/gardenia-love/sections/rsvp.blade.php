@@ -5,7 +5,7 @@
             <p class="text-slate-500 text-sm">Will you attend?</p>
         </div>
 
-        <form action="{{ $rsvp['action'] ?? '#' }}" method="POST" class="space-y-5">
+        <form action="{{ $data['rsvp']['action'] ?? '#' }}" method="POST" class="space-y-5">
             @csrf
             <div>
                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-widest mb-2">Name</label>

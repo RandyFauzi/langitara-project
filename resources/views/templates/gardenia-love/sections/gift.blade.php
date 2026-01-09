@@ -10,15 +10,15 @@
         class="max-w-sm mx-auto bg-slate-50 rounded-2xl p-6 border border-slate-100 shadow-sm relative overflow-hidden">
         <!-- Bank Logo Placeholder -->
         <div class="text-xl font-bold text-slate-800 mb-4 tracking-tight uppercase">
-            {{ $gift['bank_name'] ?? 'BANK TRANSFER' }}
+            {{ $data['gift']['bank_name'] ?? 'BANK TRANSFER' }}
         </div>
 
         <p class="text-sm text-slate-500 mb-1">Account Number</p>
         <div class="flex items-center justify-center gap-2 mb-4">
             <span id="account-number" class="text-2xl font-mono text-slate-800 tracking-wide font-bold">
-                {{ $gift['account_number'] ?? '0000 0000 0000' }}
+                {{ $data['gift']['account_number'] ?? '0000 0000 0000' }}
             </span>
-            <button onclick="copyToClipboard('{{ $gift['account_number'] ?? '' }}')"
+            <button onclick="copyToClipboard('{{ $data['gift']['account_number'] ?? '' }}')"
                 class="p-2 text-slate-400 hover:text-amber-600 transition" title="Copy">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -29,7 +29,7 @@
         </div>
 
         <p class="text-sm text-slate-500">Account Holder</p>
-        <p class="font-bold text-slate-800 text-lg">{{ $gift['account_holder'] ?? 'Couple Name' }}</p>
+        <p class="font-bold text-slate-800 text-lg">{{ $data['gift']['account_holder'] ?? 'Couple Name' }}</p>
 
         <!-- Decorative Pattern -->
         <div class="absolute top-0 right-0 p-4 opacity-10">

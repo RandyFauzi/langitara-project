@@ -54,7 +54,7 @@
 
     <script>
         // Use server-side calculated timestamp (seconds)
-        const targetTimestamp = {{ $meta['event_timestamp'] ?? 0 }};
+        const targetTimestamp = {{ $data['meta']['event_timestamp'] ?? 0 }};
 
         if (targetTimestamp) {
             const targetDate = new Date(targetTimestamp * 1000).getTime();

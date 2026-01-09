@@ -5,9 +5,18 @@
 @section('content')
 
     <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Invitation Management</h1>
-        <p class="mt-1 text-sm text-slate-500">Monitor seluruh undangan, status publikasi, dan engagement.</p>
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Invitation Management</h1>
+            <p class="mt-1 text-sm text-slate-500">Monitor seluruh undangan, status publikasi, dan engagement.</p>
+        </div>
+        <a href="{{ route('admin.invitations.create') }}"
+            class="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+            </svg>
+            Buat Undangan
+        </a>
     </div>
 
     <!-- Filters -->
@@ -114,14 +123,21 @@
                                     $ragu = $inv->rsvps->where('attendance', 'ragu')->count();
                                 @endphp
                                 <div class="flex items-center gap-2 text-xs">
-                                     <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold" title="Hadir">{{ $hadir }} H</span>
-                                     <span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold" title="Tidak">{{ $tidak }} T</span>
-                                     <span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold" title="Ragu">{{ $ragu }} R</span>
+                                    <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-bold"
+                                        title="Hadir">{{ $hadir }} H</span>
+                                    <span class="px-1.5 py-0.5 rounded bg-rose-50 text-rose-700 font-bold"
+                                        title="Tidak">{{ $tidak }} T</span>
+                                    <span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold"
+                                        title="Ragu">{{ $ragu }} R</span>
                                 </div>
                             </td>
                             <td class="px-6 py-4 text-right">
+                                <a href="{{ route('admin.invitations.editor', $inv->id) }}" title="Open Editor" 
+                                    class="inline-block text-sm font-medium text-indigo-600 hover:text-indigo-800 bg-white border border-indigo-200 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition shadow-sm mr-2">
+                                    Edit UI
+                                </a>
                                 <a href="{{ route('admin.invitations.show', $inv->id) }}"
-                                    class="inline-block text-sm font-medium text-blue-600 hover:text-blue-800 bg-white border border-blue-200 hover:bg-blue-50 px-3 py-1.5 rounded-lg transition shadow-sm">
+                                    class="inline-block text-sm font-medium text-slate-600 hover:text-slate-800 bg-white border border-slate-200 hover:bg-slate-50 px-3 py-1.5 rounded-lg transition shadow-sm">
                                     Detail
                                 </a>
                             </td>

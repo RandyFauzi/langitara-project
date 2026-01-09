@@ -2,7 +2,7 @@
 
 @if($promo)
 <div id="promo-popup" 
-     class="fixed inset-0 z-[9999] hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 transition-opacity duration-300 opacity-0"
+     class="fixed inset-0 z-[9999] hidden items-center justify-center flex bg-slate-900/60 backdrop-blur-sm p-4 transition-opacity duration-300 opacity-0"
      role="dialog" 
      aria-modal="true">
     

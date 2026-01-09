@@ -6,8 +6,8 @@
 
     <!-- Scrolling Container -->
     <div class="flex space-x-4 overflow-x-auto pb-8 px-6 snap-x snap-mandatory scrollbar-hide">
-        @if(isset($gallery) && is_array($gallery))
-            @foreach(array_slice($gallery, 0, 5) as $image)
+        @if(isset($data['gallery']) && is_array($data['gallery']))
+            @foreach(array_slice($data['gallery'], 0, 5) as $image)
                 <div class="flex-none w-72 aspect-[3/4] rounded-2xl overflow-hidden shadow-lg snap-center">
                     <img src="{{ $image }}" alt="Moment"
                         class="w-full h-full object-cover transform hover:scale-110 transition duration-700">

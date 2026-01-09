@@ -83,6 +83,60 @@ class InvitationController extends Controller
     }
 
     /**
+     * Show Create Form
+     */
+    public function create()
+    {
+        $templates = \App\Models\Template::active()->get();
+        // V1: Simple user select (limit 100 recent/all)
+        $users = User::orderBy('name')->limit(100)->get();
+
+        return view('admin.invitations.create', compact('templates', 'users'));
+    }
+
+    /**
+     * Store New Invitation
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'template_id' => 'required|exists:templates,id',
+            'user_id' => 'required|exists:users,id',
+            'event_date' => 'nullable|date',
+        ]);
+
+        $template = \App\Models\Template::findOrFail($request->template_id);
+
+        // Auto-generate Slug (Unique-ish)
+        $slugBase = \Illuminate\Support\Str::slug($request->title);
+        $slug = $slugBase . '-' . \Illuminate\Support\Str::random(5);
+
+        $invitation = Invitation::create([
+            'user_id' => $request->user_id,
+            'template_id' => $template->id,
+            'package_id' => 1, // Default to Basic/Free for now V1
+            'title' => $request->title,
+            'slug' => strtolower($slug),
+            'event_date' => $request->event_date,
+            'location' => 'TBA', // Default placeholder to satisfy DB constraint
+            'status' => 'draft',
+            'payload' => null, // Fresh start
+        ]);
+
+        // Create initial detail record
+        $invitation->detail()->create([
+            'groom_name' => 'Groom Name',
+            'bride_name' => 'Bride Name',
+        ]);
+
+        return redirect()->route('admin.invitations.editor', $invitation)
+            ->with('success', 'Undangan berhasil dibuat. Silakan edit konten.');
+    }
+
+
+
+    /**
      * Impersonate User (Login as User).
      */
     public function impersonate($id)
