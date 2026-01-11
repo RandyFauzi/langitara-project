@@ -176,6 +176,24 @@
                         </div>
                     </div>
 
+                    <!-- User Package (Current Active) -->
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                        <span class="text-xs font-semibold text-slate-500 uppercase">Paket Aktif</span>
+                        <div class="mt-2 flex items-center justify-between gap-4">
+                            <span class="text-lg font-bold text-slate-900" id="current-package-name">-</span>
+                            <div class="relative">
+                                <select id="package-dropdown" onchange="changeUserPackage(this.value)"
+                                    class="appearance-none cursor-pointer text-sm font-medium px-4 py-2 pr-8 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <!-- Options injected by JS -->
+                                </select>
+                                <svg class="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-600 pointer-events-none"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Recent Invitations -->
                         <div>
@@ -223,6 +241,9 @@
     </dialog>
 
     <script>
+        // Store current user ID for package change
+        let currentUserId = null;
+
         function openUserModal(id) {
             const modal = document.getElementById('modal-user');
             const loader = document.getElementById('user-loading');
@@ -232,6 +253,7 @@
             modal.showModal();
             loader.classList.remove('hidden');
             content.classList.add('hidden');
+            currentUserId = id; // Store for package change
 
             // Fetch
             fetch(`/admin/users/${id}`)
@@ -284,16 +306,16 @@
                         data.invitations.forEach(inv => {
                             const statusColor = inv.status === 'published' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50';
                             invList.innerHTML += `
-                                <li class="bg-white border border-slate-200 rounded-lg p-3">
-                                    <div class="flex justify-between items-start">
-                                        <div>
-                                            <div class="font-bold text-slate-800 text-sm">${inv.title}</div>
-                                            <div class="text-xs text-slate-500 font-mono mt-0.5">${inv.slug}</div>
-                                        </div>
-                                        <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded ${statusColor}">${inv.status}</span>
-                                    </div>
-                                </li>
-                            `;
+                                                        <li class="bg-white border border-slate-200 rounded-lg p-3">
+                                                            <div class="flex justify-between items-start">
+                                                                <div>
+                                                                    <div class="font-bold text-slate-800 text-sm">${inv.title}</div>
+                                                                    <div class="text-xs text-slate-500 font-mono mt-0.5">${inv.slug}</div>
+                                                                </div>
+                                                                <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded ${statusColor}">${inv.status}</span>
+                                                            </div>
+                                                        </li>
+                                                    `;
                         });
                     }
 
@@ -306,14 +328,34 @@
                         data.orders.forEach(ord => {
                             const statusColor = ord.payment_status === 'paid' ? 'text-emerald-600' : 'text-slate-500';
                             ordList.innerHTML += `
-                                 <li class="flex justify-between items-center text-sm border-b border-slate-50 pb-2 last:border-0">
-                                    <div>
-                                        <div class="font-semibold text-slate-700">${ord.package.name}</div>
-                                        <div class="text-xs text-slate-400">Rp ${Number(ord.amount).toLocaleString('id-ID')}</div>
-                                    </div>
-                                    <span class="font-bold text-xs uppercase ${statusColor}">${ord.payment_status}</span>
-                                </li>
-                            `;
+                                                         <li class="flex justify-between items-center text-sm border-b border-slate-50 pb-2 last:border-0">
+                                                            <div>
+                                                                <div class="font-semibold text-slate-700">${ord.package.name}</div>
+                                                                <div class="text-xs text-slate-400">Rp ${Number(ord.amount).toLocaleString('id-ID')}</div>
+                                                            </div>
+                                                            <span class="font-bold text-xs uppercase ${statusColor}">${ord.payment_status}</span>
+                                                        </li>
+                                                    `;
+                        });
+                    }
+
+                    // Current Active Package & Dropdown
+                    const currentPkgName = document.getElementById('current-package-name');
+                    const pkgDropdown = document.getElementById('package-dropdown');
+
+                    // Set current package name
+                    if (data.active_package) {
+                        currentPkgName.innerText = data.active_package.package_name;
+                    } else {
+                        currentPkgName.innerText = 'Belum ada paket';
+                    }
+
+                    // Populate dropdown with all packages
+                    pkgDropdown.innerHTML = '';
+                    if (data.all_packages && data.all_packages.length > 0) {
+                        data.all_packages.forEach(pkg => {
+                            const selected = data.active_package && data.active_package.package_id === pkg.id ? 'selected' : '';
+                            pkgDropdown.innerHTML += `<option value="${pkg.id}" ${selected}>${pkg.name}</option>`;
                         });
                     }
 
@@ -321,6 +363,58 @@
                     loader.classList.add('hidden');
                     content.classList.remove('hidden');
                 });
+        }
+
+        // Change User Package
+        function changeUserPackage(packageId) {
+            if (!currentUserId) return;
+
+            const dropdown = document.getElementById('package-dropdown');
+            dropdown.disabled = true;
+
+            fetch(`/admin/users/${currentUserId}/package`, {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ package_id: packageId })
+            })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.success) {
+                        document.getElementById('current-package-name').innerText = result.package_name;
+                        showToast(result.message, 'success');
+                    } else {
+                        showToast(result.message || 'Gagal mengubah paket', 'error');
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showToast('Terjadi kesalahan', 'error');
+                })
+                .finally(() => {
+                    dropdown.disabled = false;
+                });
+        }
+
+        // Simple Toast Notification
+        function showToast(message, type = 'success') {
+            const existing = document.getElementById('toast-notification');
+            if (existing) existing.remove();
+
+            const bgColor = type === 'success' ? 'bg-emerald-600' : 'bg-rose-600';
+            const toast = document.createElement('div');
+            toast.id = 'toast-notification';
+            toast.className = `fixed bottom-6 right-6 ${bgColor} text-white px-5 py-3 rounded-xl shadow-lg text-sm font-medium z-50 animate-fade-in`;
+            toast.innerText = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
     </script>
 

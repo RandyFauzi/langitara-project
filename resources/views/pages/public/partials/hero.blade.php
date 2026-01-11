@@ -1,9 +1,10 @@
 <section class="relative h-screen flex items-center overflow-hidden bg-ivory">
-    <!-- Background Gradient/Image Placeholder -->
-    <div
-        class="absolute inset-0 z-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1519225421980-715cb0202128?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center">
+    <!-- Background Wedding Image - Semi Transparent -->
+    <div class="absolute inset-0 z-0 opacity-50 bg-cover bg-center"
+        style="background-image: url('{{ asset('images/hero/wedding-1.jpg') }}');">
     </div>
-    <div class="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/90 to-transparent z-10"></div>
+    <!-- Gradient Overlay for Text Readability -->
+    <div class="absolute inset-0 bg-gradient-to-r from-ivory/80 via-ivory/60 to-transparent z-10"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 w-full">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -32,15 +33,15 @@
                 </div>
             </div>
 
-            <!-- Right Visual (3D/Mockup Placeholder) -->
+            <!-- Right Visual - Phone Mockup with Static Image -->
             <div class="relative hidden lg:block" data-aos="fade-left" data-aos-delay="200" data-aos-duration="1000">
                 <div
                     class="relative w-full max-w-lg mx-auto transform rotate-[-5deg] hover:rotate-0 transition-transform duration-700">
-                    <!-- Placeholder UI Card -->
+                    <!-- Phone Mockup with Static Image -->
                     <div
                         class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border-8 border-gray-900 aspect-[9/19]">
-                        <img src="https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=600&auto=format&fit=crop"
-                            class="w-full h-full object-cover" alt="Mobile Invitation Preview">
+                        <img src="{{ asset('images/hero/wedding-2.jpg') }}" class="w-full h-full object-cover"
+                            alt="Wedding Preview">
                     </div>
                 </div>
                 <!-- Floating Elements -->

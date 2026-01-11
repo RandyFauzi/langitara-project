@@ -20,8 +20,8 @@ class PublicHomeController extends Controller
 
         // Fetch packages for pricing section
         $packages = Package::where('status', 'active')
-            ->orderBy('price', 'asc')
-            ->take(3)
+            ->orderBy('sort_order', 'asc')
+            ->take(4)
             ->get();
 
         // Fetch active promo

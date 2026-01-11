@@ -79,10 +79,17 @@
                         </ul>
 
                         <!-- CTA Button -->
-                        <a href="{{ route('register') }}" 
-                           class="block w-full text-center py-3 rounded-xl font-semibold transition-all duration-300 {{ $package->is_featured ? 'bg-rose-gold text-white hover:bg-rose-600 shadow-lg' : 'bg-charcoal text-white hover:bg-charcoal/90' }}">
-                            {{ $package->can_publish ? 'Pilih Paket' : 'Coba Gratis' }}
-                        </a>
+                        @if($package->price == 0)
+                            {{-- Free package: Show as default, not purchasable --}}
+                            <div class="block w-full text-center py-3 rounded-xl font-semibold border-2 border-green-200 text-green-600 bg-green-50">
+                                ✓ Paket Default
+                            </div>
+                        @else
+                            <a href="{{ route('checkout', $package->slug) }}" 
+                               class="block w-full text-center py-3 rounded-xl font-semibold transition-all duration-300 {{ $package->is_featured ? 'bg-rose-gold text-white hover:bg-rose-600 shadow-lg' : 'bg-charcoal text-white hover:bg-charcoal/90' }}">
+                                Pilih Paket
+                            </a>
+                        @endif
                     </div>
                 </div>
             @endforeach

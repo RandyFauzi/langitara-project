@@ -131,8 +131,15 @@
             @endif
         </div>
 
-        <!-- Account Link -->
-        <div class="text-center pt-4">
+        <!-- Quick Links -->
+        <div class="text-center pt-4 flex items-center justify-center gap-4 flex-wrap">
+            <a href="{{ route('payment.status') }}" class="text-sm text-amber-600 hover:text-amber-700 transition flex items-center gap-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                </svg>
+                Status Pembayaran
+            </a>
+            <span class="text-slate-300">|</span>
             <a href="{{ route('dashboard.account') }}" class="text-sm text-slate-500 hover:text-charcoal transition">
                 Pengaturan Akun →
             </a>

@@ -27,6 +27,21 @@ Route::group(['as' => 'public.'], function () {
     Route::get('templates/{slug}/assets/{type}/{file}', [TemplateAssetController::class, 'show'])->name('templates.assets');
 });
 
+// Payment Routes
+Route::get('/checkout/{package:slug}', [App\Http\Controllers\PaymentController::class, 'checkout'])->name('checkout');
+Route::post('/payment/snap-token', [App\Http\Controllers\PaymentController::class, 'createSnapToken'])->name('payment.snap-token')->middleware('auth');
+Route::get('/checkout/finish', [App\Http\Controllers\PaymentController::class, 'finish'])->name('checkout.finish');
+
+// Payment Status Routes (requires auth)
+Route::middleware('auth')->group(function () {
+    Route::get('/payment/status', [App\Http\Controllers\PaymentController::class, 'status'])->name('payment.status');
+    Route::post('/payment/{userPackage}/continue', [App\Http\Controllers\PaymentController::class, 'continuePayment'])->name('payment.continue');
+    Route::delete('/payment/{userPackage}/cancel', [App\Http\Controllers\PaymentController::class, 'cancelPayment'])->name('payment.cancel');
+});
+
+// Midtrans Webhook (exclude from CSRF)
+Route::post('/payment/notification', [App\Http\Controllers\PaymentController::class, 'notification'])->name('payment.notification');
+
 // Auth Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [App\Http\Controllers\Auth\AuthController::class, 'showLogin'])->name('login');
@@ -68,6 +83,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
     // Users Module
     Route::resource('users', App\Http\Controllers\Admin\UserController::class);
     Route::post('/users/{user}/reset-password', [App\Http\Controllers\Admin\UserController::class, 'resetPassword'])->name('users.reset-password');
+    Route::patch('/user-packages/{userPackage}/status', [App\Http\Controllers\Admin\UserController::class, 'updatePackageStatus'])->name('user-packages.update-status');
+    Route::patch('/users/{user}/package', [App\Http\Controllers\Admin\UserController::class, 'changeUserPackage'])->name('users.change-package');
 
     // Invitations Module
     Route::resource('invitations', App\Http\Controllers\Admin\InvitationController::class)->only(['index', 'show', 'create', 'store']);

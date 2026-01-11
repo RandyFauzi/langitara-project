@@ -24,18 +24,18 @@
             <!-- Image Grid -->
             <div class="grid grid-cols-2 gap-4" data-aos="fade-left">
                 <div class="space-y-4 translate-y-8">
-                    <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=400&h=500&auto=format&fit=crop"
+                    <img src="{{ asset('images/portfolio/wedding-1.jpg') }}"
                         class="rounded-2xl shadow-lg w-full object-cover h-64 hover:scale-105 transition-transform duration-500"
                         alt="Wedding 1">
-                    <img src="https://images.unsplash.com/photo-1520854221256-17451cb330e7?q=80&w=400&h=500&auto=format&fit=crop"
+                    <img src="{{ asset('images/portfolio/wedding-2.jpg') }}"
                         class="rounded-2xl shadow-lg w-full object-cover h-48 hover:scale-105 transition-transform duration-500"
                         alt="Wedding 2">
                 </div>
                 <div class="space-y-4">
-                    <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=400&h=500&auto=format&fit=crop"
+                    <img src="{{ asset('images/portfolio/wedding-3.jpg') }}"
                         class="rounded-2xl shadow-lg w-full object-cover h-48 hover:scale-105 transition-transform duration-500"
                         alt="Wedding 3">
-                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=400&h=500&auto=format&fit=crop"
+                    <img src="{{ asset('images/portfolio/wedding-4.jpg') }}"
                         class="rounded-2xl shadow-lg w-full object-cover h-64 hover:scale-105 transition-transform duration-500"
                         alt="Wedding 4">
                 </div>

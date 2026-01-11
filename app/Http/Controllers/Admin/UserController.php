@@ -54,7 +54,11 @@ class UserController extends Controller
             'orders.package',
             'invitations' => function ($q) {
                 $q->latest()->take(5);
-            }
+            },
+            'userPackages' => function ($q) {
+                $q->where('status', 'active')->latest();
+            },
+            'userPackages.package'
         ])->withCount(['orders', 'invitations'])->findOrFail($id);
 
         $totalSpent = $user->orders->where('payment_status', 'paid')->sum('amount');
@@ -62,6 +66,17 @@ class UserController extends Controller
         // Add calculated attributes for JSON
         $user->total_spent = number_format($totalSpent, 0, ',', '.');
         $user->formatted_created_at = $user->created_at->format('d M Y, H:i');
+
+        // Get current active package
+        $activePackage = $user->userPackages->first();
+        $user->active_package = $activePackage ? [
+            'id' => $activePackage->id,
+            'package_id' => $activePackage->package_id,
+            'package_name' => $activePackage->package->name ?? 'Unknown',
+        ] : null;
+
+        // Get all available packages for dropdown
+        $user->all_packages = \App\Models\Package::orderBy('sort_order')->get(['id', 'name']);
 
         return response()->json($user);
     }
@@ -105,6 +120,74 @@ class UserController extends Controller
             'success' => true,
             'message' => 'Password reset successfully.',
             'new_password' => $newPassword
+        ]);
+    }
+
+    /**
+     * Update user package status.
+     */
+    public function updatePackageStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:active,pending,cancelled,expired',
+        ]);
+
+        $userPackage = \App\Models\UserPackage::findOrFail($id);
+
+        $oldStatus = $userPackage->status;
+        $userPackage->status = $request->status;
+
+        // If activating, set paid_at and expiry_date
+        if ($request->status === 'active' && $oldStatus !== 'active') {
+            $userPackage->paid_at = now();
+            $durationDays = $userPackage->package->duration_days ?? 0;
+            $userPackage->expiry_date = $durationDays > 0 ? now()->addDays($durationDays) : null;
+        }
+
+        $userPackage->save();
+
+        ActivityLog::log('update_package', "Changed package status from {$oldStatus} to {$request->status}", $userPackage);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Status paket berhasil diubah menjadi {$request->status}.",
+        ]);
+    }
+
+    /**
+     * Change user's active package.
+     */
+    public function changeUserPackage(Request $request, $userId)
+    {
+        $request->validate([
+            'package_id' => 'required|exists:packages,id',
+        ]);
+
+        $user = User::findOrFail($userId);
+        $package = \App\Models\Package::findOrFail($request->package_id);
+
+        // Deactivate current active packages
+        \App\Models\UserPackage::where('user_id', $userId)
+            ->where('status', 'active')
+            ->update(['status' => 'cancelled']);
+
+        // Create new active package
+        $userPackage = \App\Models\UserPackage::create([
+            'user_id' => $userId,
+            'package_id' => $package->id,
+            'order_id' => 'ADMIN-' . strtoupper(Str::random(8)) . '-' . time(),
+            'status' => 'active',
+            'amount' => $package->price,
+            'paid_at' => now(),
+            'expiry_date' => $package->duration_days > 0 ? now()->addDays($package->duration_days) : null,
+        ]);
+
+        ActivityLog::log('change_package', "Changed user package to {$package->name}", $user);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Paket user berhasil diubah ke {$package->name}.",
+            'package_name' => $package->name,
         ]);
     }
 }
