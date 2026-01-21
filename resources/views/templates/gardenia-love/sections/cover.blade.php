@@ -27,6 +27,15 @@
             <div class="h-[1px] w-12 bg-slate-400"></div>
         </div>
 
+        <div class="mt-8 relative z-20">
+            <button 
+                onclick="window.dispatchEvent(new CustomEvent('open-invitation')); document.getElementById('quote')?.scrollIntoView({behavior: 'smooth'}) || document.getElementById('couple')?.scrollIntoView({behavior: 'smooth'});"
+                class="px-8 py-3 bg-amber-600 text-white rounded-full font-serif italic text-lg shadow-lg hover:bg-amber-700 hover:scale-105 transition duration-300 flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"></path></svg>
+                Buka Undangan
+            </button>
+        </div>
+
         <div class="absolute bottom-10 animate-bounce">
             <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3">

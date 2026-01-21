@@ -25,6 +25,12 @@ Route::group(['as' => 'public.'], function () {
 
     // Template Assets Route
     Route::get('templates/{slug}/assets/{type}/{file}', [TemplateAssetController::class, 'show'])->name('templates.assets');
+
+    // Public Invitation Access
+    Route::get('/invitation/{slug}', [\App\Http\Controllers\Public\PublicInvitationController::class, 'show'])->name('invitation.show');
+
+    // Public API Routes (grouped for logic separation)
+    Route::post('/rsvp', [\App\Http\Controllers\Public\PublicRsvpController::class, 'store'])->name('rsvp.store');
 });
 
 // Payment Routes
@@ -60,6 +66,34 @@ Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.', 'middleware' => ['a
     Route::put('/account', [App\Http\Controllers\User\UserAccountController::class, 'update'])->name('account.update');
     Route::get('/account/password', [App\Http\Controllers\User\UserAccountController::class, 'password'])->name('account.password');
     Route::put('/account/password', [App\Http\Controllers\User\UserAccountController::class, 'updatePassword'])->name('account.password.update');
+});
+
+// Editor Routes (Authenticated Users)
+Route::middleware(['auth'])->group(function () {
+    Route::group(['as' => 'editor.'], function () {
+        // Main Editor UI
+        Route::get('/editor/{slug}', [\App\Http\Controllers\EditorController::class, 'edit'])->name('edit');
+        Route::post('/editor/{slug}', [\App\Http\Controllers\EditorController::class, 'update'])->name('update');
+        Route::post('/editor/{slug}/publish', [\App\Http\Controllers\EditorController::class, 'publish'])->name('publish');
+        Route::post('/editor/{slug}/music', [\App\Http\Controllers\EditorController::class, 'updateMusic'])->name('music.update');
+        Route::delete('/editor/{slug}/music', [\App\Http\Controllers\EditorController::class, 'destroyMusic'])->name('music.destroy');
+        Route::post('/editor/media/upload', [\App\Http\Controllers\EditorController::class, 'uploadImage'])->name('media.upload');
+
+        // Guest Management Routes
+        Route::get('/editor/{slug}/guests', [\App\Http\Controllers\User\GuestController::class, 'index'])->name('guests.index');
+        Route::post('/editor/{slug}/guests', [\App\Http\Controllers\User\GuestController::class, 'store'])->name('guests.store');
+        Route::put('/editor/{slug}/guests/{guest}', [\App\Http\Controllers\User\GuestController::class, 'update'])->name('guests.update');
+        Route::delete('/editor/{slug}/guests/{guest}', [\App\Http\Controllers\User\GuestController::class, 'destroy'])->name('guests.destroy');
+        Route::get('/editor/{slug}/guests/{guest}/link', [\App\Http\Controllers\User\GuestController::class, 'getLink'])->name('guests.link');
+        Route::get('/editor/{slug}/guests/template', [\App\Http\Controllers\User\GuestController::class, 'downloadTemplate'])->name('guests.template');
+        Route::post('/editor/{slug}/guests/import', [\App\Http\Controllers\User\GuestController::class, 'import'])->name('guests.import');
+
+        // RSVP Stats & Wishes Management
+        Route::get('/editor/{slug}/stats', [\App\Http\Controllers\User\GuestController::class, 'stats'])->name('stats');
+        Route::get('/editor/{slug}/wishes', [\App\Http\Controllers\User\GuestController::class, 'wishes'])->name('wishes.index');
+        Route::patch('/editor/{slug}/wishes/{rsvp}/toggle', [\App\Http\Controllers\User\GuestController::class, 'toggleWishVisibility'])->name('wishes.toggle');
+        Route::delete('/editor/{slug}/wishes/{rsvp}', [\App\Http\Controllers\User\GuestController::class, 'destroyWish'])->name('wishes.destroy');
+    });
 });
 
 // Admin Routes
@@ -100,17 +134,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'r
 
     // Templates
     Route::resource('templates', \App\Http\Controllers\Admin\TemplateController::class);
+    Route::patch('templates/{template}/toggle', [\App\Http\Controllers\Admin\TemplateController::class, 'toggleStatus'])->name('templates.toggle');
     Route::get('templates/{id}/preview', [\App\Http\Controllers\Admin\TemplateController::class, 'preview'])->name('templates.preview');
 
     // Music
     Route::resource('songs', \App\Http\Controllers\Admin\SongController::class)->except(['create', 'edit', 'show']);
 
-    // EDITOR API
-    Route::group(['prefix' => 'editor', 'as' => 'editor.'], function () {
-        Route::get('invitations/{invitation}', [\App\Http\Controllers\Admin\InvitationEditorController::class, 'show'])->name('invitations.show');
-        Route::post('invitations/{invitation}', [\App\Http\Controllers\Admin\InvitationEditorController::class, 'update'])->name('invitations.update');
-        Route::post('invitations/{invitation}/preview', [\App\Http\Controllers\Admin\InvitationEditorController::class, 'preview'])->name('invitations.preview');
-        Route::post('media/upload', [\App\Http\Controllers\Admin\InvitationMediaController::class, 'store'])->name('media.upload');
-    });
+
 
 });

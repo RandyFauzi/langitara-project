@@ -66,6 +66,27 @@
                             class="bg-indigo-600/90 hover:bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium backdrop-blur-sm transition">
                             Edit
                         </button>
+
+                        <!-- Toggle Visibility -->
+                        <form action="{{ route('admin.templates.toggle', $tpl->id) }}" method="POST" class="inline">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit"
+                                class="{{ $tpl->status === 'active' ? 'bg-amber-500/90 hover:bg-amber-500' : 'bg-emerald-500/90 hover:bg-emerald-500' }} text-white px-3 py-1.5 rounded-lg text-sm font-medium backdrop-blur-sm transition">
+                                {{ $tpl->status === 'active' ? 'Hide' : 'Show' }}
+                            </button>
+                        </form>
+
+                        <!-- Delete -->
+                        <form id="delete-form-{{ $tpl->id }}" action="{{ route('admin.templates.destroy', $tpl->id) }}"
+                            method="POST" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="button" onclick="confirmDelete({{ $tpl->id }})"
+                                class="bg-red-600/90 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium backdrop-blur-sm transition">
+                                Delete
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Badges -->
@@ -100,8 +121,13 @@
 
                     <div class="flex justify-between items-end border-t border-slate-100 pt-3">
                         <div class="text-xs text-slate-400 font-mono">{{ $tpl->folder_name }}</div>
-                        <div class="flex items-center text-xs text-slate-500" title="Used by {{ $tpl->invitations_count }} invitations">
-                            <svg class="w-3.5 h-3.5 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <div class="flex items-center text-xs text-slate-500"
+                            title="Used by {{ $tpl->invitations_count }} invitations">
+                            <svg class="w-3.5 h-3.5 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                </path>
+                            </svg>
                             {{ number_format($tpl->invitations_count) }}
                         </div>
                     </div>
@@ -141,8 +167,7 @@
                 </button>
             </div>
 
-            <form id="templateForm" method="POST" action=""
-                class="p-6 overflow-y-auto space-y-4">
+            <form id="templateForm" method="POST" action="" class="p-6 overflow-y-auto space-y-4">
                 @csrf
                 <div id="method-spoof"></div>
 
@@ -170,7 +195,8 @@
                     <input type="text" name="folder_name" id="folder_name" required readonly
                         class="block w-full border-slate-300 rounded-lg bg-slate-50 text-slate-500 focus:ring-indigo-500 text-sm font-mono cursor-not-allowed"
                         placeholder="gardenia-love">
-                    <p class="text-[10px] text-slate-500 mt-1">Cannot be edited. Must match folder in resources/views/templates/</p>
+                    <p class="text-[10px] text-slate-500 mt-1">Cannot be edited. Must match folder in
+                        resources/views/templates/</p>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -205,13 +231,32 @@
                     <button type="button" onclick="document.getElementById('templateModal').close()"
                         class="mr-3 px-4 py-2 text-sm text-slate-600 hover:text-slate-800 font-medium">Cancel</button>
                     <button type="submit"
-                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg shadow-sm">Save Changes</button>
+                        class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-lg shadow-sm">Save
+                        Changes</button>
                 </div>
             </form>
         </div>
     </dialog>
 
     <script>
+        // SweetAlert2 Delete Confirmation
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Hapus Template?',
+                text: "Anda yakin ingin menghapus template ini? Semua file (View & Assets) akan dihapus permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + id).submit();
+                }
+            })
+        }
+
         // Open Modal for Edit
         function editTemplate(tpl) {
             document.getElementById('templateForm').reset();
@@ -223,7 +268,7 @@
             document.getElementById('name').value = tpl.name;
             document.getElementById('category').value = tpl.category;
             document.getElementById('folder_name').value = tpl.folder_name;
-            
+
             // Strictly Readonly
             // Folder name input already has readonly attribute in HTML, but we ensure it here just in case
             const folderInput = document.getElementById('folder_name');

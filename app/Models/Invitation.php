@@ -15,23 +15,62 @@ class Invitation extends Model
         'package_id',
         'slug',
         'title',
-        'event_date',
-        'location',
         'status',
-        'expired_at',
-        'payload',
-        'song_id',
+        'active_sections',
+
+        // Bride & Groom
+        'groom_name',
+        'groom_nickname',
+        'groom_father',
+        'groom_mother',
+        'groom_photo',
+        'bride_name',
+        'bride_nickname',
+        'bride_father',
+        'bride_mother',
+        'bride_photo',
+
+        // Assets
+        'cover_image',
+        'music_path',
+
+        // Quote
+        'quote_text',
+        'quote_author',
+
+        // Events
+        'akad_date',
+        'akad_location',
+        'akad_address',
+        'akad_map_link',
+        'akad_map_embed',
+        'resepsi_date',
+        'resepsi_location',
+        'resepsi_address',
+        'resepsi_map_link',
+        'resepsi_map_embed',
+
+        // JSON Lists
+        'love_stories',
+        'gallery_photos',
+        'bank_accounts',
+
+        // Gift
+        'gift_address',
     ];
 
     protected $casts = [
-        'event_date' => 'date',
-        'expired_at' => 'datetime',
-        'payload' => 'array',
+        'active_sections' => 'array',
+        'love_stories' => 'array',
+        'gallery_photos' => 'array',
+        'bank_accounts' => 'array',
+        'akad_date' => 'datetime',
+        'resepsi_date' => 'datetime',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(\App\Models\User::class);
     }
 
     public function template()
@@ -49,25 +88,12 @@ class Invitation extends Model
         return $this->belongsTo(Song::class);
     }
 
-    public function detail()
+    public function music()
     {
-        return $this->hasOne(InvitationDetail::class);
+        return $this->hasOne(InvitationMusic::class);
     }
 
-    public function events()
-    {
-        return $this->hasMany(InvitationEvent::class)->orderBy('sort_order');
-    }
-
-    public function loveStories()
-    {
-        return $this->hasMany(InvitationLoveStory::class)->orderBy('sort_order');
-    }
-
-    public function galleries()
-    {
-        return $this->hasMany(InvitationGallery::class)->orderBy('sort_order');
-    }
+    // Removed legacy relationships: detail, events, loveStories, galleries
 
     public function guests()
     {
@@ -76,6 +102,15 @@ class Invitation extends Model
 
     public function rsvps()
     {
-        return $this->hasManyThrough(Rsvp::class, Guest::class);
+        return $this->hasMany(Rsvp::class);
+    }
+
+    /**
+     * Helper to retrieve data from the content JSON safely.
+     * Use dot notation, e.g. $invitation->getMeta('couple.groom.name')
+     */
+    public function getMeta(string $key, $default = null)
+    {
+        return data_get($this->content, $key, $default);
     }
 }

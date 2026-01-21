@@ -16,11 +16,7 @@ class InvitationEditorPageController extends Controller
      */
     public function show(Invitation $invitation)
     {
-        // Pass essential IDs for JS mounting
-        return view('admin.invitations.editor', [
-            'invitation' => $invitation,
-            'invitationId' => $invitation->id,
-            'invitationSlug' => $invitation->slug,
-        ]);
+        // Redirect to the new JSON-based Editor
+        return redirect()->route('editor.edit', $invitation->slug);
     }
 }

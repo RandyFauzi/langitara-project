@@ -95,9 +95,9 @@ class DashboardController extends Controller
     {
         $total = Rsvp::count();
         $stats = [
-            'hadir' => Rsvp::where('attendance', 'hadir')->count(),
-            'tidak' => Rsvp::where('attendance', 'tidak')->count(),
-            'ragu' => Rsvp::where('attendance', 'ragu')->count(),
+            'hadir' => Rsvp::where('status', 'hadir')->count(),
+            'tidak' => Rsvp::where('status', 'tidak_hadir')->count(),
+            'ragu' => Rsvp::where('status', 'ragu')->count(),
         ];
 
         // Calculate percentages

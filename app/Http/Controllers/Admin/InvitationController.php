@@ -16,7 +16,7 @@ class InvitationController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Invitation::with(['user', 'template', 'package', 'guests', 'rsvps']);
+        $query = Invitation::with(['user', 'template', 'package', 'rsvps']);
 
         // Search
         if ($request->has('search') && $request->search) {
@@ -64,17 +64,17 @@ class InvitationController extends Controller
         // 2. RSVP Stats Aggregation
         $rsvpStats = [
             'total' => $invitation->rsvps()->count(),
-            'hadir' => $invitation->rsvps()->where('attendance', 'hadir')->sum('pax'), // Pax count for hadir
-            'tidak' => $invitation->rsvps()->where('attendance', 'tidak')->count(),
-            'ragu' => $invitation->rsvps()->where('attendance', 'ragu')->count(),
+            'hadir' => $invitation->rsvps()->where('status', 'hadir')->sum('amount'), // Amount count for hadir
+            'tidak' => $invitation->rsvps()->where('status', 'tidak_hadir')->count(),
+            'ragu' => $invitation->rsvps()->where('status', 'ragu')->count(),
         ];
 
         // 3. Guest List with RSVP data (Paginated)
-        $query = $invitation->rsvps()->with('guest'); // Accessing RSVPs directly which has guest relation
+        $query = $invitation->rsvps(); // No guest relation, just RSVP data
 
         // Optional: Filter within the detail page 
         if ($request->has('rsvp_status') && $request->rsvp_status) {
-            $query->where('attendance', $request->rsvp_status);
+            $query->where('status', $request->rsvp_status);
         }
 
         $rsvps = $query->latest()->paginate(10)->withQueryString();
@@ -118,17 +118,17 @@ class InvitationController extends Controller
             'package_id' => 1, // Default to Basic/Free for now V1
             'title' => $request->title,
             'slug' => strtolower($slug),
-            'event_date' => $request->event_date,
-            'location' => 'TBA', // Default placeholder to satisfy DB constraint
+            // 'event_date' => $request->event_date, // Removed in new schema
+            // 'location' => 'TBA', // Removed in new schema
             'status' => 'draft',
-            'payload' => null, // Fresh start
+            
+            // Initial Defaults (New Schema)
+            'groom_name' => 'Nama Mempelai Pria',
+            'bride_name' => 'Nama Mempelai Wanita',
+            'active_sections' => ['cover', 'couple', 'events', 'gallery', 'wishes'],
         ]);
 
-        // Create initial detail record
-        $invitation->detail()->create([
-            'groom_name' => 'Groom Name',
-            'bride_name' => 'Bride Name',
-        ]);
+        // No detail() relation anymore. Columns are on the main table.
 
         return redirect()->route('admin.invitations.editor', $invitation)
             ->with('success', 'Undangan berhasil dibuat. Silakan edit konten.');

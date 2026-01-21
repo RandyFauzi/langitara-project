@@ -20,7 +20,7 @@ class TemplateAssetController extends Controller
     public function show(string $slug, string $type, string $file)
     {
         // 1. Validate Asset Type
-        if (!in_array($type, ['css', 'js', 'images', 'icons'])) {
+        if (!in_array($type, ['css', 'js', 'images', 'icons', 'assets'])) {
             abort(404);
         }
 
@@ -29,8 +29,9 @@ class TemplateAssetController extends Controller
         $file = basename($file);
 
         // 3. Construct Path
-        // Path: resources/views/templates/{slug}/assets/{type}/{file}
-        $path = resource_path("views/templates/{$slug}/assets/{type}/{$file}");
+        // Path: resources/views/templates/{slug}/{type}/{file}
+        // Note: Removed extra 'assets/' segment to match actual structure
+        $path = resource_path("views/templates/{$slug}/{$type}/{$file}");
 
         // 4. Check Existence
         if (!File::exists($path)) {

@@ -13,6 +13,15 @@ class InvitationDetail extends Model
         'invitation_id',
         'groom_name',
         'bride_name',
+        'content',
+        'active_sections',
+        'meta_settings',
+    ];
+
+    protected $casts = [
+        'content' => 'array',
+        'active_sections' => 'array',
+        'meta_settings' => 'array',
     ];
 
     public function invitation()

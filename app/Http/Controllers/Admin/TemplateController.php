@@ -7,6 +7,7 @@ use App\Models\Template;
 use App\Services\Template\TemplateRendererService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class TemplateController extends Controller
 {
@@ -114,97 +115,89 @@ class TemplateController extends Controller
     {
         $template = Template::findOrFail($id);
 
-        // Standardized Contract Data (Matches TemplateDataContract)
-        $dummyData = [
-            'features' => [
-                'cover' => true,
-                'quote' => true,
-                'couple' => true,
-                'love_story' => true,
-                'carousel' => true,
-                'events' => true,
-                'countdown' => true,
-                'location' => true,
-                'gallery' => true,
-                'rsvp' => true,
-                'gift' => true,
-                'wishes' => true,
-                'closing' => true,
+        // Create a dummy Invitation model with new database schema attributes
+        $invitation = new \App\Models\Invitation([
+            'groom_nickname' => 'Romeo',
+            'bride_nickname' => 'Juliet',
+            'groom_name' => 'Romeo Montague',
+            'bride_name' => 'Juliet Capulet',
+            'groom_father' => 'Mr. Montague',
+            'groom_mother' => 'Mrs. Montague',
+            'bride_father' => 'Mr. Capulet',
+            'bride_mother' => 'Mrs. Capulet',
+            'akad_date' => now()->addMonth()->setTime(8, 0),
+            'akad_location' => 'Masjid Al-Ikhlas',
+            'akad_address' => 'Jl. Kebahagiaan No. 1, Jakarta',
+            'akad_map_link' => 'https://maps.google.com',
+            'resepsi_date' => now()->addMonth()->setTime(11, 0),
+            'resepsi_location' => 'Grand Ballroom Hotel Mulia',
+            'resepsi_address' => 'Jl. Asia Afrika, Senayan, Jakarta',
+            'resepsi_map_link' => 'https://maps.google.com',
+            'cover_image' => 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000',
+            'music_path' => 'music/sample.mp3', // Dummy path
+            'quote_text' => "And now these three remain: faith, hope and love. But the greatest of these is love.",
+            'quote_author' => "1 Corinthians 13:13",
+            'gallery_photos' => [
+                'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=600',
+                'https://images.unsplash.com/photo-1510419262272-91136b856b3b?w=500',
+                'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500'
             ],
-            'meta' => [
-                'title' => 'The Wedding of Romeo & Juliet',
-                'description' => 'We appear to be getting married.',
-                'song_url' => 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', // Sample
-                'event_date' => now()->addMonth()->format('d . m . Y'),
-                'event_timestamp' => now()->addMonth()->timestamp,
-                'cover_image' => 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80&w=2000'
-            ],
-            'couple' => [
-                'bride_name' => 'Juliet Capulet',
-                'bride_photo' => 'https://images.unsplash.com/photo-1510419262272-91136b856b3b?w=500',
-                'bride_parents' => 'Mr. Capulet & Mrs. Capulet',
-                'bride_instagram' => 'juliet_capulet',
-                'groom_name' => 'Romeo Montague',
-                'groom_photo' => 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500',
-                'groom_parents' => 'Mr. Montague & Mrs. Montague',
-                'groom_instagram' => 'romeo_montague',
-            ],
-            'quote' => [
-                'text' => "And now these three remain: faith, hope and love. But the greatest of these is love.",
-                'source' => "1 Corinthians 13:13"
-            ],
-            'love_story' => [
-                ['year' => '2020', 'title' => 'First Meet', 'story' => 'We met at a coffee shop and fell in love instantly.'],
-                ['year' => '2022', 'title' => 'Engagement', 'story' => 'He proposed under the stars. She said yes!']
-            ],
-            'gallery' => [
-                'https://placehold.co/600x400?text=Gallery+1',
-                'https://placehold.co/600x400?text=Gallery+2',
-                'https://placehold.co/600x400?text=Gallery+3'
-            ],
-            'events' => [
-                [
-                    'title' => 'Akad Nikah',
-                    'date_label' => now()->addMonth()->format('d F Y'),
-                    'time_label' => '08:00 - 10:00',
-                    'location_name' => 'Masjid Al-Ikhlas',
-                    'address' => 'Jl. Kebahagiaan No. 1, Jakarta',
-                    'map_url' => 'https://maps.google.com'
-                ],
-                [
-                    'title' => 'Resepsi',
-                    'date_label' => now()->addMonth()->format('d F Y'),
-                    'time_label' => '11:00 - 13:00',
-                    'location_name' => 'Grand Ballroom',
-                    'address' => 'Hotel Mulia Senayan, Jakarta',
-                    'map_url' => 'https://maps.google.com'
-                ]
-            ],
-            'location' => [
-                'name' => 'Grand Ballroom, Hotel Mulia',
-                'address' => 'Jl. Asia Afrika, Senayan, Jakarta',
-                'map_embed' => 'https://www.google.com/maps/embed?pb=...'
-            ],
-            'gift' => [
-                'bank_name' => 'BCA',
-                'account_number' => '1234567890',
-                'account_holder' => 'Romeo Montague',
-            ],
-            'wishes' => [
-                ['name' => 'Mercutio', 'message' => 'Best wishes!', 'initials' => 'M', 'time' => '2 mins ago'],
-                ['name' => 'Benvolio', 'message' => 'Congrats!', 'initials' => 'B', 'time' => '1 hour ago'],
-            ],
-            'rsvp' => [
-                'action' => '#',
-            ]
+            // Add other fields as necessary for the view
+        ]);
+
+        // Manually set photos if accessors/mutators act up (though array in constructor should work with Fillable)
+        $invitation->groom_photo = 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=500';
+        $invitation->bride_photo = 'https://images.unsplash.com/photo-1510419262272-91136b856b3b?w=500';
+
+        // Prepare data for renderer
+        // We pass 'invitation' key so it becomes $invitation in the view
+        $templateData = [
+            'invitation' => $invitation,
+            'guest_name' => 'Tamu Undangan', // Default guest name for preview
         ];
 
-        // Delegate rendering to the service
-        // The service will:
-        // 1. Validate the data
-        // 2. Inject system metadata (assets, slug)
-        // 3. Wrap it in ['data' => ...]
-        // 4. Return the View
-        return $this->renderer->render($template->slug, $dummyData, 'preview');
+        return $this->renderer->render($template->slug, $templateData, 'preview');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        $template = Template::findOrFail($id);
+
+        // Safety: Check if used
+        if ($template->invitations()->count() > 0) {
+            return back()->with('error', 'Cannot delete template because it is being used by invitations. Please delete the invitations first.');
+        }
+
+        // 1. Delete View Files
+        $viewPath = resource_path('views/templates/' . $template->folder_name);
+        if (File::exists($viewPath)) {
+            File::deleteDirectory($viewPath);
+        }
+
+        // 2. Delete Asset Files
+        $assetPath = public_path('assets/templates/' . $template->folder_name);
+        if (File::exists($assetPath)) {
+            File::deleteDirectory($assetPath);
+        }
+
+        // 3. Delete DB Record
+        $template->delete();
+
+        return back()->with('success', 'Template and all associated files deleted successfully.');
+    }
+
+    /**
+     * Toggle the status of the specified resource.
+     */
+    public function toggleStatus($id)
+    {
+        $template = Template::findOrFail($id);
+        $template->status = $template->status === 'active' ? 'inactive' : 'active';
+        $template->save();
+
+        return back()->with('success', 'Template status updated successfully.');
     }
 }

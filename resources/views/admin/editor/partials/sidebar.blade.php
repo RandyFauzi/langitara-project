@@ -32,6 +32,21 @@
             <span x-show="sectionHasError('meta')" class="ml-auto w-2 h-2 rounded-full bg-red-500"></span>
         </button>
 
+        {{-- Template --}}
+        <button @click="activeMenu = 'template'"
+            :class="activeMenu === 'template' ? 'bg-indigo-50 border-indigo-600 text-indigo-700' : 'border-transparent text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:border-slate-300'"
+            class="w-full group flex items-center px-4 py-2.5 text-sm font-medium border-l-4 transition-colors">
+            <div class="mr-3 text-slate-400 group-hover:text-slate-500"
+                :class="{'text-indigo-600': activeMenu === 'template'}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                </svg>
+            </div>
+            Pilih Tema
+        </button>
+
 
         {{-- Isi (Collapsible) --}}
         <div x-data="{ open: true }">

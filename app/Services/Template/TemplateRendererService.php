@@ -36,14 +36,10 @@ class TemplateRendererService
             throw new TemplateNotFoundException("Template with slug '{$templateSlug}' not found at path: {$viewPath}");
         }
 
-        // 3. Validate Data Structure (Basic contract check)
-        if (!isset($templateData['features']) || !is_array($templateData['features'])) {
-            throw new TemplateRenderException("Invalid template data: 'features' key is missing or invalid.");
-        }
+        // 3. Validate Data Structure (Optional / Loose check now)
+        // if (!isset($templateData['features'])) { ... } 
 
         // 4. Inject Meta (Safe Mode Injection)
-        // We inject system-level metadata strictly for asset resolution.
-        // This does not modify the user's data payload structure but augments it for the renderer.
         $templateData['__template'] = [
             'slug' => $templateSlug,
             'asset_path' => url("templates/{$templateSlug}/assets"),
@@ -51,9 +47,9 @@ class TemplateRendererService
 
         // 5. Render
         try {
-            // STRICT MODE: Enforce $data contract validation
-            // We ONLY pass 'data' to the view. No unwrapped variables allowed.
-            return $this->viewFactory->make($viewPath, ['data' => $templateData]);
+            // UNWRAPPED MODE: Pass $templateData keys as root variables to the view
+            // This allows $invitation, $guest_name, etc. to be accessed directly.
+            return $this->viewFactory->make($viewPath, $templateData);
         } catch (\Exception $e) {
             throw new TemplateRenderException("Failed to render template '{$templateSlug}': " . $e->getMessage(), 0, $e);
         }

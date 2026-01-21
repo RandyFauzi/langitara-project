@@ -63,4 +63,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserPackage::class);
     }
+
+    /**
+     * Get the highest value active package for the user.
+     */
+    public function getActivePackageAttribute()
+    {
+        // Get active user package with highest price package
+        $userPackage = $this->userPackages()
+            ->active()
+            ->with('package')
+            ->get()
+            ->sortByDesc(function ($userPackage) {
+                return $userPackage->package->price;
+            })
+            ->first();
+
+        return $userPackage ? $userPackage->package : null;
+    }
 }

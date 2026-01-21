@@ -1,0 +1,235 @@
+/* 
+ * Template: Rose Gold
+ * Version: 2.1 (Enhanced)
+ * Description: Premium animations with shimmer, parallax ready, and lush florals.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap');
+
+:root {
+    --color-gold: #8D6E63;
+    --color-gold-dark: #6D4C41;
+    --color-bg: #FDFCF8;
+    --color-accent: #E0C097;
+}
+
+body {
+    font-family: 'Lato', sans-serif;
+    background-color: var(--color-bg);
+}
+
+.font-guest {
+    font-family: 'Great Vibes', cursive;
+}
+
+.font-serif {
+    font-family: 'Playfair Display', serif;
+}
+
+/* --- KEYFRAMES --- */
+
+@keyframes sway {
+
+    0%,
+    100% {
+        transform: rotate(-2deg);
+    }
+
+    50% {
+        transform: rotate(2deg);
+    }
+}
+
+@keyframes sway-large {
+
+    0%,
+    100% {
+        transform: rotate(-4deg);
+    }
+
+    50% {
+        transform: rotate(4deg);
+    }
+}
+
+@keyframes rise-up {
+    0% {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0px);
+        opacity: 1;
+    }
+}
+
+@keyframes flower-rise-left {
+    0% {
+        transform: translate(-50%, 100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes flower-rise-right {
+    0% {
+        transform: translate(50%, 100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+}
+
+@keyframes zoom-in-up {
+    0% {
+        transform: scale(0.5) translateY(100%);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fade-in-up {
+    0% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+@keyframes pulse-soft {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px rgba(224, 192, 151, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 8px 25px rgba(224, 192, 151, 0.7);
+    }
+}
+
+/* --- CLASSES --- */
+
+/* Text Entrance */
+.fade-in {
+    opacity: 0;
+    animation: fade-in-up 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.delay-100 {
+    animation-delay: 200ms;
+}
+
+.delay-200 {
+    animation-delay: 400ms;
+}
+
+.delay-300 {
+    animation-delay: 600ms;
+}
+
+/* Flower Animations */
+
+.flower-sway {
+    animation: sway 7s ease-in-out infinite alternate;
+    transform-origin: top right;
+}
+
+.flower-sway-bottom {
+    animation: sway 7s ease-in-out infinite alternate;
+    transform-origin: bottom center;
+}
+
+.flower-rise {
+    animation: rise-up 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.flower-rise-left {
+    animation: flower-rise-left 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.flower-rise-right {
+    animation: flower-rise-right 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.zoom-in-up {
+    animation: zoom-in-up 2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Button Styling */
+.btn-gradient {
+    background: linear-gradient(90deg, #E0C097 0%, #FABE78 50%, #E0C097 100%);
+    background-size: 200% auto;
+    color: white;
+    box-shadow: 0 4px 15px rgba(224, 192, 151, 0.4);
+    position: relative;
+    overflow: hidden;
+    animation: pulse-soft 3s infinite;
+    transition: all 0.3s ease;
+}
+
+@keyframes pulse-slow {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.animate-pulse-slow {
+    animation: pulse-slow 3s infinite ease-in-out;
+}
+
+.btn-gradient:hover {
+    background-position: right center;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(224, 192, 151, 0.6);
+}
+
+/* Shine Effect on Button */
+.btn-gradient::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 4s infinite linear;
+}
+
+/* Parallax Layer (JS will handle transform) */
+.parallax-layer {
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+}

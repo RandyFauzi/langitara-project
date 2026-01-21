@@ -7,33 +7,42 @@
     <style>
         /* CSS Failsafe for Sidebar Visibility */
         @media (min-width: 768px) {
-            aside { display: flex !important; }
-            .mobile-only { display: none !important; }
+            aside {
+                display: flex !important;
+            }
+
+            .mobile-only {
+                display: none !important;
+            }
         }
     </style>
 
-    <div x-data="editor({{ $invitation->id }})" x-init="init()" class="h-full w-full flex flex-col" x-cloak>
-        
+    <div x-data="editor({{ $invitation->id }}, '{{ $invitation->slug }}', {{ $invitation->template_id }})" x-init="init()"
+        class="h-full w-full flex flex-col" x-cloak>
+
         <!-- Top Bar -->
         @include('admin.editor.partials.topbar')
-        
+
         <!-- Saving Indicator (Top Right) -->
         <div class="fixed top-4 right-4 z-50 pointer-events-none">
-            <span x-show="saving" x-transition class="bg-indigo-600 text-white text-xs px-3 py-1 rounded shadow">Saving...</span>
-            <span x-show="!saving && !dirty" x-transition class="bg-green-500 text-white text-xs px-3 py-1 rounded shadow">Saved</span>
-            <span x-show="!saving && dirty" x-transition class="bg-amber-500 text-white text-xs px-3 py-1 rounded shadow">Unsaved</span>
+            <span x-show="saving" x-transition
+                class="bg-indigo-600 text-white text-xs px-3 py-1 rounded shadow">Saving...</span>
+            <span x-show="!saving && !dirty" x-transition
+                class="bg-green-500 text-white text-xs px-3 py-1 rounded shadow">Saved</span>
+            <span x-show="!saving && dirty" x-transition
+                class="bg-amber-500 text-white text-xs px-3 py-1 rounded shadow">Unsaved</span>
         </div>
 
         <!-- Main Content Area -->
         <main class="flex-1 pt-16 flex overflow-hidden">
-            
+
             <!-- Left Sidebar -->
             @include('admin.editor.partials.sidebar')
 
             <!-- Center: Form Editor -->
             <section class="flex-1 h-full bg-slate-50 relative overflow-hidden flex flex-col"
                 :class="{ 'hidden': isMobile && activeTab !== 'edit' }">
-                
+
                 <!-- Mobile Section Title -->
                 <div class="md:hidden px-4 py-3 bg-white border-b border-slate-200 flex items-center justify-between">
                     <h2 class="font-semibold text-slate-800" x-text="currentSectionLabel"></h2>
@@ -47,8 +56,8 @@
                         <div x-show="loading" class="flex flex-col items-center justify-center py-20">
                             <svg class="animate-spin h-8 w-8 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg"
                                 fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                                </circle>
                                 <path class="opacity-75" fill="currentColor"
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                 </path>
@@ -58,6 +67,10 @@
 
                         <!-- Forms -->
                         <div x-show="!loading" x-transition.opacity>
+
+                            <div x-show="activeMenu === 'template'">
+                                @include('admin.editor.forms.template')
+                            </div>
 
                             <div x-show="activeMenu === 'meta'">
                                 @include('admin.editor.forms.meta')
@@ -119,8 +132,7 @@
             <div x-show="isPreviewLoading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
                 <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none"
                     viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                        stroke-width="4"></circle>
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                     </path>
@@ -161,8 +173,7 @@
                 </svg>
                 <span class="text-xs font-medium">Edit</span>
             </button>
-            <button @click="activeTab = 'sections'"
-                :class="activeTab === 'sections' ? 'text-indigo-600' : 'text-slate-500'"
+            <button @click="activeTab = 'sections'" :class="activeTab === 'sections' ? 'text-indigo-600' : 'text-slate-500'"
                 class="flex flex-col items-center gap-1 p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">

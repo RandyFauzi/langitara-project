@@ -4,9 +4,11 @@ import Alpine from 'alpinejs';
 window.Alpine = Alpine;
 
 // Define Editor Function globally
-window.editor = function (invitationId) {
+// Define Editor Function globally
+window.editor = function (invitationId, invitationSlug, initialTemplateId) {
     return {
         invitationId,
+        invitationSlug,
 
         loading: true,
         saving: false,
@@ -16,6 +18,7 @@ window.editor = function (invitationId) {
 
         // Sections Config (Required for Sidebar/Mobile Menu)
         sections: [
+            { id: 'template', label: 'Pilih Tema', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>' },
             { id: 'meta', label: 'General Info', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>' },
             { id: 'couple', label: 'Bride & Groom', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>' },
             { id: 'events', label: 'Events', icon: '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>' },
@@ -31,6 +34,7 @@ window.editor = function (invitationId) {
 
         // ✅ WAJIB ADA DEFAULT SHAPE
         form: {
+            template_id: initialTemplateId,
             meta: {
                 title: '',
                 description: '',
